@@ -9,5 +9,7 @@ add_executable(RayTracerChallenge main.cpp)
 
 target_include_directories(RayTracerChallenge PRIVATE src)
 
+target_link_libraries(RayTracerChallenge FMath)
+
 
 add_subdirectory(tests)

@@ -7,7 +7,7 @@
 
 class Tuple {
 public:
-    Tuple(float x, float y, float z, float w);
+    explicit Tuple(float x, float y, float z, float w);
 
     [[nodiscard]] static Tuple point(float x, float y, float z);
 
