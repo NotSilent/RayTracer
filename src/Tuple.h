@@ -5,25 +5,27 @@
 #ifndef RAYTRACERCHALLENGE_TUPLE_H
 #define RAYTRACERCHALLENGE_TUPLE_H
 
+#include <ostream>
+
 class Tuple {
 public:
     explicit Tuple(float x, float y, float z, float w);
 
-    [[nodiscard]] static Tuple point(float x, float y, float z);
+    [[nodiscard]]  static Tuple point(float x, float y, float z);
 
     [[nodiscard]] static Tuple vector(float x, float y, float z);
 
-    float getX() const;
+    [[nodiscard]] float getX() const;
 
-    float getY() const;
+    [[nodiscard]] float getY() const;
 
-    float getZ() const;
+    [[nodiscard]] float getZ() const;
 
-    float getW() const;
+    [[nodiscard]] float getW() const;
 
-    bool isPoint() const;
+    [[nodiscard]] bool isPoint() const;
 
-    bool isVector() const;
+    [[nodiscard]] bool isVector() const;
 
     bool operator==(const Tuple &other) const;
 
@@ -33,11 +35,11 @@ public:
 
     Tuple operator-() const;
 
-    Tuple operator*(const float other) const;
+    Tuple operator*(float other) const;
 
-    Tuple operator/(const float other) const;
+    Tuple operator/(float other) const;
 
-    float magnitude() const;
+    [[nodiscard]] float magnitude() const;
 
     void normalize();
 
@@ -45,9 +47,9 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, Tuple const &value);
 
-    static float dot(const Tuple &lhs, const Tuple &rhs);
+    [[nodiscard]] static float dot(const Tuple &lhs, const Tuple &rhs);
 
-    [[nodiscard]]static Tuple cross(const Tuple &lhs, const Tuple &rhs);
+    [[nodiscard]] static Tuple cross(const Tuple &lhs, const Tuple &rhs);
 
 private:
     float _x;

@@ -1,10 +1,9 @@
 //
 // Created by SILENT on 21/01/2021.
 //
-
-#include <ostream>
 #include "Tuple.h"
 #include "FMath.h"
+#include "math.h"
 
 Tuple::Tuple(float x, float y, float z, float w) : _x(x), _y(y), _z(z), _w(w) {
 
