@@ -23,6 +23,10 @@ Color Canvas::getColor(uint32_t x, uint32_t y) const {
 }
 
 void Canvas::setColor(uint32_t x, uint32_t y, const Color &color) {
+    if (x >= getWidth() || y >= getHeight()) {
+        return;
+    }
+
     _buffer[(_width * y) + x] = color;
 }
 
