@@ -3,10 +3,15 @@
 //
 #include "Tuple.h"
 #include "FMath.h"
-#include "math.h"
 
-Tuple::Tuple(float x, float y, float z, float w) : _x(x), _y(y), _z(z), _w(w) {
+Tuple::Tuple() : Tuple(0.0f, 0.0f, 0.0f, 0.0f) {
+}
 
+Tuple::Tuple(float x, float y, float z, float w) {
+    _buffer[0] = x;
+    _buffer[1] = y;
+    _buffer[2] = z;
+    _buffer[3] = w;
 }
 
 Tuple Tuple::point(float x, float y, float z) {
@@ -18,27 +23,27 @@ Tuple Tuple::vector(float x, float y, float z) {
 }
 
 float Tuple::getX() const {
-    return _x;
+    return _buffer[0];
 }
 
 float Tuple::getY() const {
-    return _y;
+    return _buffer[1];
 }
 
 float Tuple::getZ() const {
-    return _z;
+    return _buffer[2];
 }
 
 float Tuple::getW() const {
-    return _w;
+    return _buffer[3];
 }
 
 bool Tuple::isPoint() const {
-    return FMath::approximately(_w, 1.0f);
+    return FMath::approximately(getW(), 1.0f);
 }
 
 bool Tuple::isVector() const {
-    return FMath::approximately(_w, 0.0f);
+    return FMath::approximately(getW(), 0.0f);
 }
 
 bool Tuple::operator==(const Tuple &other) const {
@@ -77,10 +82,10 @@ float Tuple::magnitude() const {
 
 void Tuple::normalize() {
     const auto magnitude = this->magnitude();
-    _x /= magnitude;
-    _y /= magnitude;
-    _z /= magnitude;
-    _w /= magnitude;
+    _buffer[0] /= magnitude;
+    _buffer[1] /= magnitude;
+    _buffer[2] /= magnitude;
+    _buffer[3] /= magnitude;
 }
 
 Tuple Tuple::normalized() {
@@ -97,4 +102,12 @@ Tuple Tuple::cross(const Tuple &lhs, const Tuple &rhs) {
     return Tuple::vector(lhs.getY() * rhs.getZ() - lhs.getZ() * rhs.getY(),
                          lhs.getZ() * rhs.getX() - lhs.getX() * rhs.getZ(),
                          lhs.getX() * rhs.getY() - lhs.getY() * rhs.getX());
+}
+
+const float &Tuple::operator[](uint32_t i) const {
+    return _buffer[i];
+}
+
+float &Tuple::operator[](uint32_t i) {
+    return _buffer[i];
 }

@@ -9,6 +9,8 @@
 
 class Tuple {
 public:
+    Tuple();
+
     explicit Tuple(float x, float y, float z, float w);
 
     [[nodiscard]]  static Tuple point(float x, float y, float z);
@@ -39,6 +41,10 @@ public:
 
     Tuple operator/(float other) const;
 
+    float &operator[](uint32_t i);
+
+    const float &operator[](uint32_t i) const;
+
     [[nodiscard]] float magnitude() const;
 
     void normalize();
@@ -52,10 +58,7 @@ public:
     [[nodiscard]] static Tuple cross(const Tuple &lhs, const Tuple &rhs);
 
 private:
-    float _x;
-    float _y;
-    float _z;
-    float _w;
+    float _buffer[4];
 };
 
 #endif //RAYTRACERCHALLENGE_TUPLE_H

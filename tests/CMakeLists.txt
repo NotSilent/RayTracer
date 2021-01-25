@@ -3,7 +3,7 @@ set(CATCH_INCLUDE_DIR .)
 add_library(Catch INTERFACE)
 
 # Add test executable
-add_executable(Tests main.test.cpp Tuple.tests.cpp Color.tests.cpp Canvas.tests.cpp)
+add_executable(Tests main.test.cpp Tuple.tests.cpp Color.tests.cpp Canvas.tests.cpp Matrix.tests.cpp)
 
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 target_link_libraries(Tests Catch)
