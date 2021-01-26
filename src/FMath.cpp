@@ -3,7 +3,7 @@
 //
 
 #include <numeric>
-#include "math.h"
+#include "cmath"
 #include "FMath.h"
 
 bool FMath::approximately(float lhs, float rhs) {
@@ -14,4 +14,16 @@ bool FMath::approximately(float lhs, float rhs) {
 #else
     return fabsf(lhs - rhs) <= std::numeric_limits<float>::epsilon();
 #endif
+}
+
+float FMath::sqrt(float value) {
+    return std::sqrtf(value);
+}
+
+float FMath::sin(float value) {
+    return std::sinf(value);
+}
+
+float FMath::cos(float value) {
+    return std::cosf(value);
 }

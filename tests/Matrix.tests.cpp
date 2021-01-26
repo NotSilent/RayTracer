@@ -283,3 +283,174 @@ TEST_CASE("Multiplying a product by its inverse") {
     const auto a = (mul * mat2.inversed());
     REQUIRE(mat1 == (mul * mat2.inversed()));
 }
+
+TEST_CASE("Multiplying by a translation matrix") {
+    const auto transform = Mat4::translation(5.0f, -3.0f, 2.0f);
+    const auto point = Tuple::point(-3.0f, 4.0f, 5.0f);
+
+    REQUIRE(Tuple::point(2.0f, 1.0f, 7.0f) == (transform * point));
+}
+
+TEST_CASE("Multiplying by the inverse of a translation matrix") {
+    const auto transform = Mat4::translation(5.0f, -3.0f, 2.0f);
+    const auto inv = transform.inversed();
+    const auto point = Tuple::point(-3.0f, 4.0f, 5.0f);
+
+    REQUIRE(Tuple::point(-8.0f, 7.0f, 3.0f) == (inv * point));
+}
+
+TEST_CASE("Translation does not affect vectors") {
+    const auto transform = Mat4::translation(5.0f, -3.0f, 2.0f);
+    const auto v = Tuple::vector(-3.0f, 4.0f, 5.0f);
+
+    REQUIRE(v == (transform * v));
+}
+
+TEST_CASE("A scaling matrix applied to a point") {
+    const auto transform = Mat4::scaling(2.0f, 3.0f, 4.0f);
+    const auto p = Tuple::point(-4.0f, 6.0f, 8.0f);
+
+    REQUIRE(Tuple::point(-8.0f, 18.0f, 32.0f) == (transform * p));
+}
+
+TEST_CASE("A scaling matrix applied to a vector") {
+    const auto transform = Mat4::scaling(2.0f, 3.0f, 4.0f);
+    const auto v = Tuple::vector(-4.0f, 6.0f, 8.0f);
+
+    REQUIRE(Tuple::vector(-8.0f, 18.0f, 32.0f) == (transform * v));
+}
+
+TEST_CASE("Multiplying by the inverse of a scaling matrix") {
+    const auto transform = Mat4::scaling(2.0f, 3.0f, 4.0f);
+    const auto inv = transform.inversed();
+    const auto v = Tuple::vector(-4.0f, 6.0f, 8.0f);
+
+    REQUIRE(Tuple::vector(-2.0f, 2.0f, 2.0f) == (inv * v));
+}
+
+TEST_CASE("Reflection is scaling by a negative value") {
+    const auto transform = Mat4::scaling(-1.0f, 1.0f, 1.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(-2.0f, 3.0f, 4.0f) == (transform * p));
+}
+
+TEST_CASE("Rotating a point around the x axis") {
+    const auto p = Tuple::point(0.0f, 1.0f, 0.0f);
+    const auto halfQuarter = Mat4::rotation<Axis::X>(FMath::PI / 4.0f);
+    const auto fullQuarter = Mat4::rotation<Axis::X>(FMath::PI / 2.0f);
+
+    float result = FMath::sqrt(2.0f) / 2.0f;
+
+    REQUIRE(Tuple::point(0.0f, result, result) == halfQuarter * p);
+    REQUIRE(Tuple::point(0.0f, 0.0f, 1.0f) == fullQuarter * p);
+}
+
+TEST_CASE("The inverse of an x-rotation rotates in the opposite direction") {
+    const auto p = Tuple::point(0.0f, 1.0f, 0.0f);
+    const auto halfQuarter = Mat4::rotation<Axis::X>(FMath::PI / 4.0f);
+    const auto inv = halfQuarter.inversed();
+
+    float result = FMath::sqrt(2.0f) / 2.0f;
+
+    REQUIRE(Tuple::point(0.0f, result, -result) == inv * p);
+}
+
+TEST_CASE("Rotating a point around the y axis") {
+    const auto p = Tuple::point(0.0f, 0.0f, 1.0f);
+    const auto halfQuarter = Mat4::rotation<Axis::Y>(FMath::PI / 4.0f);
+    const auto fullQuarter = Mat4::rotation<Axis::Y>(FMath::PI / 2.0f);
+
+    float result = FMath::sqrt(2.0f) / 2.0f;
+
+    REQUIRE(Tuple::point(result, 0.0f, result) == halfQuarter * p);
+    REQUIRE(Tuple::point(1.0f, 0.0f, 0.0f) == fullQuarter * p);
+}
+
+TEST_CASE("Rotating a point around the z axis") {
+    const auto p = Tuple::point(0.0f, 1.0f, 0.0f);
+    const auto halfQuarter = Mat4::rotation<Axis::Z>(FMath::PI / 4.0f);
+    const auto fullQuarter = Mat4::rotation<Axis::Z>(FMath::PI / 2.0f);
+
+    float result = FMath::sqrt(2.0f) / 2.0f;
+
+    REQUIRE(Tuple::point(-result, result, 0) == halfQuarter * p);
+    REQUIRE(Tuple::point(-1.0f, 0.0f, 0.0f) == fullQuarter * p);
+}
+
+TEST_CASE("A shearing transformation moves x in proportion to y") {
+    const auto transform = Mat4::shearing(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(5.0f, 3.0f, 4.0f) == (transform * p));
+}
+
+TEST_CASE("A shearing transformation moves x in proportion to z") {
+    const auto transform = Mat4::shearing(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(6.0f, 3.0f, 4.0f) == (transform * p));
+}
+
+TEST_CASE("A shearing transformation moves y in proportion to x") {
+    const auto transform = Mat4::shearing(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(2.0f, 5.0f, 4.0f) == (transform * p));
+}
+
+TEST_CASE("A shearing transformation moves y in proportion to z") {
+    const auto transform = Mat4::shearing(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(2.0f, 7.0f, 4.0f) == (transform * p));
+}
+
+TEST_CASE("A shearing transformation moves z in proportion to x") {
+    const auto transform = Mat4::shearing(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(2.0f, 3.0f, 6.0f) == (transform * p));
+}
+
+TEST_CASE("A shearing transformation moves z in proportion to y") {
+    const auto transform = Mat4::shearing(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+    const auto p = Tuple::point(2.0f, 3.0f, 4.0f);
+
+    REQUIRE(Tuple::point(2.0f, 3.0f, 7.0f) == (transform * p));
+}
+
+TEST_CASE("Individual transformations are applied in sequence") {
+    const auto p = Tuple::point(1.0f, 0.0f, 1.0f);
+    const auto A = Mat4::rotation<Axis::X>(FMath::PI / 2.0f);
+    const auto B = Mat4::scaling(5.0f, 5.0f, 5.0f);
+    const auto C = Mat4::translation(10.0f, 5.0f, 7.0f);
+
+    const auto p2 = A * p;
+    REQUIRE(Tuple::point(1.0f, -1.0f, 0.0f) == p2);
+
+    const auto p3 = B * p2;
+    REQUIRE(Tuple::point(5.0f, -5.0f, 0.0f) == p3);
+
+    const auto p4 = C * p3;
+    REQUIRE(Tuple::point(15.0f, 0.0f, 7.0f) == p4);
+}
+
+TEST_CASE("Chained transformations must be applied in reverse order") {
+    const auto p = Tuple::point(1.0f, 0.0f, 1.0f);
+    const auto A = Mat4::rotation<Axis::X>(FMath::PI / 2.0f);
+    const auto B = Mat4::scaling(5.0f, 5.0f, 5.0f);
+    const auto C = Mat4::translation(10.0f, 5.0f, 7.0f);
+    const auto T = C * B * A;
+
+    REQUIRE(Tuple::point(15.0f, 0.0f, 7.0f) == (T * p));
+}
+
+
+
+
+
+
+
+
+

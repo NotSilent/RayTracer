@@ -211,6 +211,51 @@ public:
                                      v8, v9, v10, v11,
                                      v12, v13, v14, v15};
     }
+
+    static Mat4 translation(const float x, const float y, const float z) {
+        return Mat4(1.0f, 0.0f, 0.0f, x,
+                    0.0f, 1.0f, 0.0f, y,
+                    0.0f, 0.0f, 1.0f, z,
+                    0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    static Mat4 scaling(const float x, const float y, const float z) {
+        return Mat4(x, 0.0f, 0.0f, 0.0f,
+                    0.0f, y, 0.0f, 0.0f,
+                    0.0f, 0.0f, z, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    template<Axis AXIS>
+    static Mat4 rotation(const float angleRad) {
+        if constexpr (AXIS == Axis::X) {
+            return Mat4(1.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f, FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f,
+                        0.0f, FMath::sin(angleRad), FMath::cos(angleRad), 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f);
+        } else if (AXIS == Axis::Y) {
+            return Mat4(FMath::cos(angleRad), 0.0f, FMath::sin(angleRad), 0.0f,
+                        0.0f, 1.0f, 0.0f, 0.0f,
+                        -FMath::sin(angleRad), 0.0f, FMath::cos(angleRad), 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f);
+        } else if (AXIS == Axis::Z) {
+            return Mat4(FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f, 0.0f,
+                        FMath::sin(angleRad), FMath::cos(angleRad), 0.0f, 0.0f,
+                        0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f);
+        } else {
+            throw std::runtime_error("How did it even compile?");
+        }
+    }
+
+    static Mat4 shearing(const float xToY, const float xToZ,
+                         const float yToX, const float yToZ,
+                         const float zToX, const float zToY) {
+        return Mat4(1.0f, xToY, xToZ, 0.0f,
+                    yToX, 1.0f, yToZ, 0.0f,
+                    zToX, zToY, 1.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f);
+    }
 };
 
 #endif //RAYTRACERCHALLENGE_MATRIX_H
