@@ -3,6 +3,7 @@
 #include <fstream>
 #include <Canvas.h>
 #include "Tuple.h"
+#include "Matrix.h"
 
 struct Projectile {
     Tuple position;
@@ -27,24 +28,30 @@ const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
 int main() {
-    Projectile proj{
-            .position = Tuple::point(0.0f, 1.0f, 0.0f),
-            .velocity = Tuple::vector(1.0f, 1.8f, 0.0f).normalized() * 12.5,
-    };
-
-    const Environment env{
-            .gravity = Tuple::vector(0.0f, -0.1f, 0.0f),
-            .wind = Tuple::vector(-0.01f, 0.0f, 0.0f),
-    };
-
     Canvas canvas(WIDTH, HEIGHT);
     const Color white(1.0f, 1.0f, 1.0f);
 
-    while (proj.position.getY() >= 0.0f) {
-        canvas.setColor(proj.position.getX(), HEIGHT - proj.position.getY(), white);
-        std::cout << "Projectile position: " << proj.position << "\n";
+    const auto point = Tuple::point(0.0f, 0.5f, 0.0f);
+    float step = (2.0f * FMath::PI) / 12.0f;
+    float aspectRatio = static_cast<float>(WIDTH) / HEIGHT;
 
-        proj = tick(env, proj);
+    for (uint32_t i = 0; i < 12; ++i) {
+        const auto rotation = Mat4::rotation<Axis::Z>(step * i);
+        const auto hourPosition = rotation * point;
+
+        float x = hourPosition.getX() / aspectRatio;
+        x = (x + 1.0f) / 2.0f;
+
+        float y = (hourPosition.getY() + 1.0f) / 2.0f;
+
+        std::cout << x << " " << y << "\n";
+
+        x *= WIDTH;
+        y *= HEIGHT;
+
+        std::cout << x << " " << y << "\n";
+
+        canvas.setColor(x, y, Color(1.0f, 1.0f, 1.0f));
     }
 
     //std::cout << std::filesystem::current_path() << "\n";

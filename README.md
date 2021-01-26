@@ -1,3 +1,3 @@
 # The Ray Tracer Challenge C++
 
-My implementation in C++
+Implementation in C++ using static inheritance

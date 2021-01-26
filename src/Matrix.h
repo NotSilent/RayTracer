@@ -80,8 +80,8 @@ public:
 
         Matrix<DIMENSION> mat;
 
-        for (uint32_t row = 0; row < 4; ++row) {
-            for (uint32_t col = 0; col < 4; ++col) {
+        for (uint32_t row = 0; row < DIMENSION; ++row) {
+            for (uint32_t col = 0; col < DIMENSION; ++col) {
                 float cof = cofactor(row, col);
                 mat.set(col, row, cof / determinant());
             }
@@ -131,9 +131,9 @@ public:
     operator*(Tuple const &tuple) const {
         Tuple t;
 
-        for (uint32_t row = 0; row < 4; row++) {
+        for (uint32_t row = 0; row < DIMENSION; row++) {
             float value = 0.0f;
-            for (uint32_t col = 0; col < 4; col++) {
+            for (uint32_t col = 0; col < DIMENSION; col++) {
                 value += get(row, col) * tuple[col];
             }
             t[row] = value;
@@ -182,14 +182,14 @@ protected:
     std::vector<float> _buffer;
 };
 
-class Mat2 : public Matrix<2> {
+class Mat2 final : public Matrix<2> {
 public:
     Mat2(float v0, float v1, float v2, float v3) {
         _buffer = std::vector<float>{v0, v1, v2, v3};
     }
 };
 
-class Mat3 : public Matrix<3> {
+class Mat3 final : public Matrix<3> {
 public:
     Mat3(float v0, float v1, float v2,
          float v3, float v4, float v5,
@@ -200,7 +200,7 @@ public:
     }
 };
 
-class Mat4 : public Matrix<4> {
+class Mat4 final : public Matrix<4> {
 public:
     Mat4(float v0, float v1, float v2, float v3,
          float v4, float v5, float v6, float v7,
