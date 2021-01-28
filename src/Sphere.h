@@ -24,7 +24,7 @@ public:
 
     void setTransform(const Mat4 &transform);
 
-    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &rrrrrrrr) const;
+    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray) const;
 
 private:
     Mat4 _transform;

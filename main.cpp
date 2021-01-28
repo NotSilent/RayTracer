@@ -2,52 +2,28 @@
 #include <filesystem>
 #include <fstream>
 #include <Canvas.h>
+#include <Sphere.h>
+#include <Ray.h>
 #include "Tuple.h"
 #include "Matrix.h"
+#include "IntersectionResult.h"
 
-struct Projectile {
-    Tuple position;
-    Tuple velocity;
-};
+const uint32_t WIDTH = 640;
+const uint32_t HEIGHT = 480;
 
-struct Environment {
-    Tuple gravity;
-    Tuple wind;
-};
-
-Projectile tick(const Environment &env, const Projectile &proj) {
-    const auto position = proj.position + proj.velocity;
-    const auto velocity = proj.velocity + env.gravity + env.wind;
-    return Projectile{
-            .position = position,
-            .velocity = velocity,
-    };
-}
-
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
+Color getColor(const Sphere &s, const Tuple &origin, uint32_t x, uint32_t y);
 
 int main() {
     Canvas canvas(WIDTH, HEIGHT);
-    const Color white(1.0f, 1.0f, 1.0f);
 
-    const auto point = Tuple::point(0.0f, 0.5f, 0.0f);
-    float step = (2.0f * FMath::PI) / 12.0f;
-    float aspectRatio = static_cast<float>(WIDTH) / HEIGHT;
+    const Sphere s;
+    const auto origin = Tuple::point(0.0f, 0.0f, -10.0f);
 
-    for (uint32_t i = 0; i < 12; ++i) {
-        const auto rotation = Mat4::rotation<Axis::Z>(step * i);
-        const auto hourPosition = rotation * point;
-
-        float x = hourPosition.getX() / aspectRatio;
-        x = (x + 1.0f) / 2.0f;
-
-        float y = (hourPosition.getY() + 1.0f) / 2.0f;
-
-        x *= WIDTH;
-        y *= HEIGHT;
-
-        canvas.setColor(x, y, Color(1.0f, 1.0f, 1.0f));
+    for (uint32_t x = 0; x < WIDTH; ++x) {
+        for (uint32_t y = 0; y < HEIGHT; ++y) {
+            const auto color = getColor(s, origin, x, y);
+            canvas.setColor(x, y, color);
+        }
     }
 
     //std::cout << std::filesystem::current_path() << "\n";
@@ -57,4 +33,25 @@ int main() {
     file.close();
 
     return 0;
+}
+
+Color getColor(const Sphere &s, const Tuple &origin, uint32_t x, uint32_t y) {
+    static const Color hitColor(0.5f, 1.0f, 0.5f);
+    static const Color black(0.0f, 0.0f, 0.0f);
+    static const float mul = 4.0f;
+    static const float aspectRatio = static_cast<float>(WIDTH) / HEIGHT;
+
+    float normalX = (static_cast<float>(x) / static_cast<float>(WIDTH)) * 2.0f - 1.0f;
+    float normalY = ((static_cast<float>(y) / static_cast<float>(HEIGHT)) * 2.0f - 1.0f) / aspectRatio;
+
+    const auto direction = (Tuple::point(normalX * mul, normalY * mul, 0.0f) - origin).normalized();
+
+    const Ray ray(origin, direction);
+    const auto ir = s.getIntersectionResult(ray);
+
+    if (ir.getCount() == 0) {
+        return black;
+    }
+
+    return hitColor;
 }
