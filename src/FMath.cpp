@@ -2,8 +2,7 @@
 // Created by SILENT on 21/01/2021.
 //
 
-#include <numeric>
-#include "cmath"
+#include <limits>
 #include "FMath.h"
 
 bool FMath::approximately(float lhs, float rhs) {
@@ -17,13 +16,13 @@ bool FMath::approximately(float lhs, float rhs) {
 }
 
 float FMath::sqrt(float value) {
-    return std::sqrtf(value);
+    return sqrtf(value);
 }
 
 float FMath::sin(float value) {
-    return std::sinf(value);
+    return sinf(value);
 }
 
 float FMath::cos(float value) {
-    return std::cosf(value);
+    return cosf(value);
 }

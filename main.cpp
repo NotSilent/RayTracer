@@ -44,12 +44,8 @@ int main() {
 
         float y = (hourPosition.getY() + 1.0f) / 2.0f;
 
-        std::cout << x << " " << y << "\n";
-
         x *= WIDTH;
         y *= HEIGHT;
-
-        std::cout << x << " " << y << "\n";
 
         canvas.setColor(x, y, Color(1.0f, 1.0f, 1.0f));
     }

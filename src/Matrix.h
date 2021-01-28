@@ -19,7 +19,65 @@ public:
         _buffer = std::vector<float>(DIMENSION * DIMENSION);
     }
 
-    [[nodiscard]] static Matrix<DIMENSION> identity() {
+    Matrix(std::initializer_list<float> list) {
+        _buffer = std::vector<float>{list};
+    }
+
+    ~Matrix() = default;
+
+    template<uint32_t D = DIMENSION>
+    [[nodiscard]] typename std::enable_if<(D == 4), Matrix<DIMENSION>>::type
+    static translation(const float x, const float y, const float z) {
+        return Matrix<DIMENSION>{1.0f, 0.0f, 0.0f, x,
+                                 0.0f, 1.0f, 0.0f, y,
+                                 0.0f, 0.0f, 1.0f, z,
+                                 0.0f, 0.0f, 0.0f, 1.0f};
+    }
+
+    template<uint32_t D = DIMENSION>
+    [[nodiscard]] typename std::enable_if<(D == 4), Matrix<DIMENSION>>::type
+    static scaling(const float x, const float y, const float z) {
+        return Matrix<DIMENSION>{x, 0.0f, 0.0f, 0.0f,
+                                 0.0f, y, 0.0f, 0.0f,
+                                 0.0f, 0.0f, z, 0.0f,
+                                 0.0f, 0.0f, 0.0f, 1.0f};
+    }
+
+    template<Axis AXIS, uint32_t D = DIMENSION>
+    [[nodiscard]] typename std::enable_if<(D == 4), Matrix<DIMENSION>>::type
+    static rotation(const float angleRad) {
+        if constexpr (AXIS == Axis::X) {
+            return Matrix<DIMENSION>{1.0f, 0.0f, 0.0f, 0.0f,
+                                     0.0f, FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f,
+                                     0.0f, FMath::sin(angleRad), FMath::cos(angleRad), 0.0f,
+                                     0.0f, 0.0f, 0.0f, 1.0f};
+        } else if (AXIS == Axis::Y) {
+            return Matrix<DIMENSION>{FMath::cos(angleRad), 0.0f, FMath::sin(angleRad), 0.0f,
+                                     0.0f, 1.0f, 0.0f, 0.0f,
+                                     -FMath::sin(angleRad), 0.0f, FMath::cos(angleRad), 0.0f,
+                                     0.0f, 0.0f, 0.0f, 1.0f};
+        } else if (AXIS == Axis::Z) {
+            return Matrix<DIMENSION>{FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f, 0.0f,
+                                     FMath::sin(angleRad), FMath::cos(angleRad), 0.0f, 0.0f,
+                                     0.0f, 0.0f, 1.0f, 0.0f,
+                                     0.0f, 0.0f, 0.0f, 1.0f};
+        } else {
+            throw std::runtime_error("How did it even compile?");
+        }
+    }
+
+    template<uint32_t D = DIMENSION>
+    [[nodiscard]] typename std::enable_if<(D == 4), Matrix<DIMENSION>>::type
+    static shearing(const float xToY, const float xToZ,
+                    const float yToX, const float yToZ,
+                    const float zToX, const float zToY) {
+        return Matrix<DIMENSION>{1.0f, xToY, xToZ, 0.0f,
+                                 yToX, 1.0f, yToZ, 0.0f,
+                                 zToX, zToY, 1.0f, 0.0f,
+                                 0.0f, 0.0f, 0.0f, 1.0f};
+    }
+
+    [[nodiscard]] static Matrix identity() {
         Matrix<DIMENSION> mat;
         for (uint32_t i = 0; i < DIMENSION; ++i) {
             mat.set(i, i, 1.0f);
@@ -110,6 +168,10 @@ public:
 #endif
     }
 
+    [[nodiscard]] friend bool operator!=(const Matrix<DIMENSION> &lhs, const Matrix<DIMENSION> &rhs) {
+        return !(lhs == rhs);
+    }
+
     [[nodiscard]] friend Matrix<DIMENSION> operator*(
             const Matrix<DIMENSION> &lhs, const Matrix<DIMENSION> &rhs) {
         Matrix<DIMENSION> mat;
@@ -128,7 +190,7 @@ public:
 
     template<uint32_t D = DIMENSION>
     [[nodiscard]] typename std::enable_if<(D == 4), Tuple>::type
-    operator*(Tuple const &tuple) const {
+    operator*(const Tuple &tuple) const {
         Tuple t;
 
         for (uint32_t row = 0; row < DIMENSION; row++) {
@@ -182,80 +244,8 @@ protected:
     std::vector<float> _buffer;
 };
 
-class Mat2 final : public Matrix<2> {
-public:
-    Mat2(float v0, float v1, float v2, float v3) {
-        _buffer = std::vector<float>{v0, v1, v2, v3};
-    }
-};
-
-class Mat3 final : public Matrix<3> {
-public:
-    Mat3(float v0, float v1, float v2,
-         float v3, float v4, float v5,
-         float v6, float v7, float v8) {
-        _buffer = std::vector<float>{v0, v1, v2,
-                                     v3, v4, v5,
-                                     v6, v7, v8};
-    }
-};
-
-class Mat4 final : public Matrix<4> {
-public:
-    Mat4(float v0, float v1, float v2, float v3,
-         float v4, float v5, float v6, float v7,
-         float v8, float v9, float v10, float v11,
-         float v12, float v13, float v14, float v15) {
-        _buffer = std::vector<float>{v0, v1, v2, v3,
-                                     v4, v5, v6, v7,
-                                     v8, v9, v10, v11,
-                                     v12, v13, v14, v15};
-    }
-
-    static Mat4 translation(const float x, const float y, const float z) {
-        return Mat4(1.0f, 0.0f, 0.0f, x,
-                    0.0f, 1.0f, 0.0f, y,
-                    0.0f, 0.0f, 1.0f, z,
-                    0.0f, 0.0f, 0.0f, 1.0f);
-    }
-
-    static Mat4 scaling(const float x, const float y, const float z) {
-        return Mat4(x, 0.0f, 0.0f, 0.0f,
-                    0.0f, y, 0.0f, 0.0f,
-                    0.0f, 0.0f, z, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f);
-    }
-
-    template<Axis AXIS>
-    static Mat4 rotation(const float angleRad) {
-        if constexpr (AXIS == Axis::X) {
-            return Mat4(1.0f, 0.0f, 0.0f, 0.0f,
-                        0.0f, FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f,
-                        0.0f, FMath::sin(angleRad), FMath::cos(angleRad), 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f);
-        } else if (AXIS == Axis::Y) {
-            return Mat4(FMath::cos(angleRad), 0.0f, FMath::sin(angleRad), 0.0f,
-                        0.0f, 1.0f, 0.0f, 0.0f,
-                        -FMath::sin(angleRad), 0.0f, FMath::cos(angleRad), 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f);
-        } else if (AXIS == Axis::Z) {
-            return Mat4(FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f, 0.0f,
-                        FMath::sin(angleRad), FMath::cos(angleRad), 0.0f, 0.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f);
-        } else {
-            throw std::runtime_error("How did it even compile?");
-        }
-    }
-
-    static Mat4 shearing(const float xToY, const float xToZ,
-                         const float yToX, const float yToZ,
-                         const float zToX, const float zToY) {
-        return Mat4(1.0f, xToY, xToZ, 0.0f,
-                    yToX, 1.0f, yToZ, 0.0f,
-                    zToX, zToY, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f);
-    }
-};
+using Mat2 = Matrix<2>;
+using Mat3 = Matrix<3>;
+using Mat4 = Matrix<4>;
 
 #endif //RAYTRACERCHALLENGE_MATRIX_H

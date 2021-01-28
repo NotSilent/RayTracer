@@ -77,7 +77,7 @@ Tuple Tuple::operator/(const float other) const {
 }
 
 float Tuple::magnitude() const {
-    return sqrt(getX() * getX() + getY() * getY() + getZ() * getZ() + getW() * getW());
+    return FMath::sqrt(getX() * getX() + getY() * getY() + getZ() * getZ() + getW() * getW());
 }
 
 void Tuple::normalize() {
