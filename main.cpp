@@ -7,21 +7,27 @@
 #include "Tuple.h"
 #include "Matrix.h"
 #include "IntersectionResult.h"
+#include "Material.h"
+#include "PointLight.h"
 
 const uint32_t WIDTH = 640;
 const uint32_t HEIGHT = 480;
 
-Color getColor(const Sphere &s, const Tuple &origin, uint32_t x, uint32_t y);
+Color getColor(const Sphere &s, const Tuple &origin, const PointLight &light,
+               uint32_t x, uint32_t y);
 
 int main() {
     Canvas canvas(WIDTH, HEIGHT);
 
     const Sphere s;
+    const PointLight light(
+            Tuple::point(-10.0, 10.0f, -10.0f),
+            Color(1.0f, 1.0f, 1.0f));
     const auto origin = Tuple::point(0.0f, 0.0f, -10.0f);
 
     for (uint32_t x = 0; x < WIDTH; ++x) {
         for (uint32_t y = 0; y < HEIGHT; ++y) {
-            const auto color = getColor(s, origin, x, y);
+            const auto color = getColor(s, origin, light, x, y);
             canvas.setColor(x, y, color);
         }
     }
@@ -35,8 +41,8 @@ int main() {
     return 0;
 }
 
-Color getColor(const Sphere &s, const Tuple &origin, uint32_t x, uint32_t y) {
-    static const Color hitColor(0.5f, 1.0f, 0.5f);
+Color getColor(const Sphere &s, const Tuple &origin, const PointLight &light,
+               uint32_t x, uint32_t y) {
     static const Color black(0.0f, 0.0f, 0.0f);
     static const float mul = 4.0f;
     static const float aspectRatio = static_cast<float>(WIDTH) / HEIGHT;
@@ -53,5 +59,10 @@ Color getColor(const Sphere &s, const Tuple &origin, uint32_t x, uint32_t y) {
         return black;
     }
 
-    return hitColor;
+    const auto hit = ir.getHit();
+    const auto point = ray.getPosition(hit->getDistance());
+    const auto normal = hit->getObject().getNormalAt(point);
+    const auto eye = -ray.getDirection();
+
+    return hit->getObject().getMaterial()->lightning(light, point, eye, normal);
 }
