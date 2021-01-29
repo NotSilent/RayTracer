@@ -12,8 +12,8 @@ TEST_CASE("Creating a canvas") {
     REQUIRE(c.getHeight() == 20);
 
     const Color white(0.0f, 0.0f, 0.0f);
-    for (int y = 0; y < c.getHeight(); ++y) {
-        for (int x = 0; x < c.getWidth(); ++x) {
+    for (uint32_t y = 0; y < c.getHeight(); ++y) {
+        for (uint32_t x = 0; x < c.getWidth(); ++x) {
             REQUIRE(c.getColor(x, y) == white);
         }
     }

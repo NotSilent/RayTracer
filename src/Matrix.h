@@ -51,12 +51,12 @@ public:
                                      0.0f, FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f,
                                      0.0f, FMath::sin(angleRad), FMath::cos(angleRad), 0.0f,
                                      0.0f, 0.0f, 0.0f, 1.0f};
-        } else if (AXIS == Axis::Y) {
+        } else if constexpr (AXIS == Axis::Y) {
             return Matrix<DIMENSION>{FMath::cos(angleRad), 0.0f, FMath::sin(angleRad), 0.0f,
                                      0.0f, 1.0f, 0.0f, 0.0f,
                                      -FMath::sin(angleRad), 0.0f, FMath::cos(angleRad), 0.0f,
                                      0.0f, 0.0f, 0.0f, 1.0f};
-        } else if (AXIS == Axis::Z) {
+        } else if constexpr (AXIS == Axis::Z) {
             return Matrix<DIMENSION>{FMath::cos(angleRad), -FMath::sin(angleRad), 0.0f, 0.0f,
                                      FMath::sin(angleRad), FMath::cos(angleRad), 0.0f, 0.0f,
                                      0.0f, 0.0f, 1.0f, 0.0f,
@@ -211,7 +211,7 @@ public:
         } else if constexpr (DIMENSION == 2) {
             return _buffer[0] * _buffer[3] - _buffer[1] * _buffer[2];
         } else {
-            float det = 0;
+            float det = 0.0f;
 
             for (uint32_t col = 0; col < DIMENSION; ++col) {
                 det += get(0, col) * cofactor(0, col);

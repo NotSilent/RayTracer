@@ -12,11 +12,13 @@ class Ray;
 
 class IntersectionResult;
 
+class Material;
+
 class Sphere {
 public:
     Sphere();
 
-    Sphere(const Mat4 &other);
+    explicit Sphere(const Mat4 &other);
 
     bool operator==(const Sphere &other) const;
 
@@ -24,10 +26,16 @@ public:
 
     void setTransform(const Mat4 &transform);
 
+    [[nodiscard]] Tuple getNormalAt(const Tuple &point) const;
+
     [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray) const;
+
+    [[nodiscard]] std::shared_ptr<Material> getMaterial() const;
 
 private:
     Mat4 _transform;
+
+    std::shared_ptr<Material> _material;
 };
 
 

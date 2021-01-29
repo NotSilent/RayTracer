@@ -13,7 +13,7 @@ enum class Axis {
 
 class FMath {
 public:
-    static constexpr float PI = std::numbers::pi;
+    static constexpr float PI = static_cast<float>(std::numbers::pi);
 
     static bool approximately(float lhs, float rhs);
 

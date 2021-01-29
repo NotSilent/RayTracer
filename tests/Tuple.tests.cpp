@@ -1,6 +1,7 @@
 //
 // Created by SILENT on 21/01/2021.
 //
+#include <Sphere.h>
 #include "catch.hpp"
 #include "FMath.h"
 #include "Tuple.h"
@@ -88,34 +89,34 @@ TEST_CASE("Dividing a tuple by a scalar") {
     REQUIRE(div == (t / 2));
 }
 
-TEST_CASE("Computing the magnitude of vector(1, 0, 0)") {
+TEST_CASE("Computing the getMagnitude of vector(1, 0, 0)") {
     const auto v = Tuple::vector(1.0f, 0.0f, 0.0f);
     const float magnitude = 1.0f;
-    REQUIRE(magnitude == v.magnitude());
+    REQUIRE(magnitude == v.getMagnitude());
 }
 
-TEST_CASE("Computing the magnitude of vector(0, 1, 0)") {
+TEST_CASE("Computing the getMagnitude of vector(0, 1, 0)") {
     const auto v = Tuple::vector(0.0f, 1.0f, 0.0f);
     const float magnitude = 1.0f;
-    REQUIRE(magnitude == v.magnitude());
+    REQUIRE(magnitude == v.getMagnitude());
 }
 
-TEST_CASE("Computing the magnitude of vector(0, 0, 1)") {
+TEST_CASE("Computing the getMagnitude of vector(0, 0, 1)") {
     const auto v = Tuple::vector(0.0f, 0.0f, 1.0f);
     const float magnitude = 1.0f;
-    REQUIRE(magnitude == v.magnitude());
+    REQUIRE(magnitude == v.getMagnitude());
 }
 
-TEST_CASE("Computing the magnitude of vector(1, 2, 3)") {
+TEST_CASE("Computing the getMagnitude of vector(1, 2, 3)") {
     const auto v = Tuple::vector(1.0f, 2.0f, 3.0f);
     const float magnitude = sqrt(14.0f);
-    REQUIRE(magnitude == v.magnitude());
+    REQUIRE(magnitude == v.getMagnitude());
 }
 
-TEST_CASE("Computing the magnitude of vector(-1, -2, -3)") {
+TEST_CASE("Computing the getMagnitude of vector(-1, -2, -3)") {
     const auto v = Tuple::vector(-1.0f, -2.0f, -3.0f);
     const float magnitude = sqrt(14.0f);
-    REQUIRE(magnitude == v.magnitude());
+    REQUIRE(magnitude == v.getMagnitude());
 }
 
 TEST_CASE("Normalizing vector(4, 0, 0) gives (1, 0, 0)") {
@@ -133,11 +134,11 @@ TEST_CASE("Normalizing vector(1, 2, 3)") {
     REQUIRE(v == normalized);
 }
 
-TEST_CASE("The magnitude of a normalized vector") {
+TEST_CASE("The getMagnitude of a getNormalized vector") {
     auto v = Tuple::vector(1.0f, 2.0f, 3.0f);
     v.normalize();
     const float magnitude = 1.0f;
-    REQUIRE(FMath::approximately(v.magnitude(), magnitude));
+    REQUIRE(FMath::approximately(v.getMagnitude(), magnitude));
 }
 
 TEST_CASE("The dot product of two tuples") {
@@ -152,4 +153,77 @@ TEST_CASE("The cross product of two vectors") {
     const auto v2 = Tuple::vector(2.0f, 3.0f, 4.0f);
     const auto cross = Tuple::vector(-1.0f, 2.0f, -1.0f);
     REQUIRE(cross == Tuple::cross(v1, v2));
+}
+
+TEST_CASE("The normal on a sphere at a point on the x axis") {
+    const Sphere s;
+    const auto n = s.getNormalAt(Tuple::point(1.0f, 0.0f, 0.0f));
+
+    REQUIRE(n == Tuple::vector(1.0f, 0.0f, 0.0f));
+}
+
+TEST_CASE("The normal on a sphere at a point on the y axis") {
+    const Sphere s;
+    const auto n = s.getNormalAt(Tuple::point(0.0f, 1.0f, 0.0f));
+
+    REQUIRE(n == Tuple::vector(0.0f, 1.0f, 0.0f));
+}
+
+TEST_CASE("The normal on a sphere at a point on the z axis") {
+    const Sphere s;
+    const auto n = s.getNormalAt(Tuple::point(0.0f, 0.0f, 1.0f));
+
+    REQUIRE(n == Tuple::vector(0.0f, 0.0f, 1.0f));
+}
+
+TEST_CASE("The normal on a sphere at a non-axial point") {
+    const Sphere s;
+    const float result = FMath::sqrt(3.0f) / 3.0f;
+    const auto n = s.getNormalAt(Tuple::point(result, result, result));
+
+    REQUIRE(n == Tuple::vector(result, result, result));
+}
+
+TEST_CASE("The normal is a getNormalized vector") {
+    const Sphere s;
+    const float result = FMath::sqrt(3.0f) / 3.0f;
+    const auto n = s.getNormalAt(Tuple::point(result, result, result));
+
+    REQUIRE(n == n.getNormalized());
+}
+
+TEST_CASE("Computing the normal on a translated sphere") {
+    const Sphere s(Mat4::translation(0.0f, 1.0f, 0.0f));
+    const auto n = s.getNormalAt(
+            Tuple::point(0.0f, 1.70711f, -0.70711f));
+
+    REQUIRE(n == Tuple::vector(0.0f, 0.70711f, -0.70711f));
+}
+
+TEST_CASE("Computing the normal on a transformed sphere") {
+    const Sphere s(
+            Mat4::scaling(1.0f, 0.5f, 1.0f) *
+            Mat4::rotation<Axis::Z>(FMath::PI / 5.0f));
+    const float result = FMath::sqrt(2.0f) / 2.0f;
+    const auto n = s.getNormalAt(
+            Tuple::point(0.0f, result, -result));
+
+    REQUIRE(n == Tuple::vector(0.0f, 0.97014f, -0.24254f));
+}
+
+TEST_CASE("Reflecting a vector approaching at 45°") {
+    const auto v = Tuple::vector(1.0f, -1.0f, 0.0f);
+    const auto n = Tuple::vector(0.0f, 1.0f, 0.0f);
+    const auto r = v.getReflected(n);
+
+    REQUIRE(r == Tuple::vector(1.0f, 1.0f, 0.0f));
+}
+
+TEST_CASE("Reflecting a vector off a slanted surface") {
+    const auto v = Tuple::vector(0.0f, -1.0f, 0.0f);
+    const float result = FMath::sqrt(2.0f) / 2.0f;
+    const auto n = Tuple::vector(result, result, 0.0f);
+    const auto r = v.getReflected(n);
+
+    REQUIRE(r == Tuple::vector(1.0f, 0.0f, 0.0f));
 }

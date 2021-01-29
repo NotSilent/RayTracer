@@ -76,19 +76,19 @@ Tuple Tuple::operator/(const float other) const {
     return Tuple(getX() / other, getY() / other, getZ() / other, getW() / other);
 }
 
-float Tuple::magnitude() const {
+float Tuple::getMagnitude() const {
     return FMath::sqrt(getX() * getX() + getY() * getY() + getZ() * getZ() + getW() * getW());
 }
 
 void Tuple::normalize() {
-    const auto magnitude = this->magnitude();
+    const auto magnitude = this->getMagnitude();
     _buffer[0] /= magnitude;
     _buffer[1] /= magnitude;
     _buffer[2] /= magnitude;
     _buffer[3] /= magnitude;
 }
 
-Tuple Tuple::normalized() {
+Tuple Tuple::getNormalized() const {
     Tuple tuple = *this;
     tuple.normalize();
     return tuple;
@@ -110,4 +110,8 @@ const float &Tuple::operator[](uint32_t i) const {
 
 float &Tuple::operator[](uint32_t i) {
     return _buffer[i];
+}
+
+Tuple Tuple::getReflected(const Tuple &normal) const {
+    return *this - normal * 2.0f * dot(*this, normal);
 }

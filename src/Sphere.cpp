@@ -5,12 +5,15 @@
 #include "Sphere.h"
 #include "Ray.h"
 #include "IntersectionResult.h"
+#include "Material.h"
 
-Sphere::Sphere() : _transform(Mat4::identity()) {
+Sphere::Sphere() :
+        _transform(Mat4::identity()),
+        _material(Material::getDefaultMaterial()) {
 }
 
 bool Sphere::operator==(const Sphere &other) const {
-    return true;
+    return _transform == other._transform;
 }
 
 Mat4 Sphere::getTransform() const {
@@ -50,4 +53,16 @@ void Sphere::setTransform(const Mat4 &transform) {
 }
 
 Sphere::Sphere(const Mat4 &other) : _transform(other) {
+}
+
+Tuple Sphere::getNormalAt(const Tuple &point) const {
+    const auto objectPoint = _transform.inversed() * point;
+    const auto objectNormal = objectPoint - Tuple::point(0.0f, 0.0f, 0.0f);
+    auto worldNormal = _transform.inversed().transposed() * objectNormal;
+    worldNormal.set<3>(0.0f);
+    return worldNormal.getNormalized();
+}
+
+std::shared_ptr<Material> Sphere::getMaterial() const {
+    return _material;
 }

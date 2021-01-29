@@ -71,5 +71,8 @@ int Color::getBlueInt() const {
 }
 
 uint32_t Color::floatToInt(float value) {
-    return std::clamp<uint32_t>(std::max(0.0f, value) * 256, 0, 255);
+    return std::clamp<uint32_t>(
+            static_cast<uint32_t >(std::max(0.0f, value) * 256.0f),
+            0,
+            255);
 }

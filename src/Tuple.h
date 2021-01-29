@@ -25,6 +25,11 @@ public:
 
     [[nodiscard]] float getW() const;
 
+    template<uint32_t COMPONENT>
+    void set(float value) {
+        _buffer[COMPONENT] = value;
+    }
+
     [[nodiscard]] bool isPoint() const;
 
     [[nodiscard]] bool isVector() const;
@@ -45,11 +50,13 @@ public:
 
     const float &operator[](uint32_t i) const;
 
-    [[nodiscard]] float magnitude() const;
+    [[nodiscard]] float getMagnitude() const;
 
     void normalize();
 
-    [[nodiscard]] Tuple normalized();
+    [[nodiscard]] Tuple getNormalized() const;
+
+    [[nodiscard]] Tuple getReflected(const Tuple& normal) const;
 
     friend std::ostream &operator<<(std::ostream &os, Tuple const &value);
 

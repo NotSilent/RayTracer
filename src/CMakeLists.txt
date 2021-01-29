@@ -7,4 +7,6 @@ add_library(FMath
         Ray.h Ray.cpp
         Sphere.h Sphere.cpp
         Intersection.h Intersection.cpp
-        IntersectionResult.h IntersectionResult.cpp)
+        IntersectionResult.h IntersectionResult.cpp
+        PointLight.h PointLight.cpp
+        Material.h Material.cpp)

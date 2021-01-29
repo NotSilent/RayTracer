@@ -8,7 +8,8 @@ add_executable(Tests main.test.cpp
         Color.tests.cpp
         Canvas.tests.cpp
         Matrix.tests.cpp
-        Ray.tests.cpp)
+        Ray.tests.cpp
+        Light.tests.cpp)
 
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 target_link_libraries(Tests Catch)

@@ -44,7 +44,7 @@ Color getColor(const Sphere &s, const Tuple &origin, uint32_t x, uint32_t y) {
     float normalX = (static_cast<float>(x) / static_cast<float>(WIDTH)) * 2.0f - 1.0f;
     float normalY = ((static_cast<float>(y) / static_cast<float>(HEIGHT)) * 2.0f - 1.0f) / aspectRatio;
 
-    const auto direction = (Tuple::point(normalX * mul, normalY * mul, 0.0f) - origin).normalized();
+    const auto direction = (Tuple::point(normalX * mul, normalY * mul, 0.0f) - origin).getNormalized();
 
     const Ray ray(origin, direction);
     const auto ir = s.getIntersectionResult(ray);
