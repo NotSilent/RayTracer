@@ -5,7 +5,8 @@
 #include "IntersectionComputations.h"
 
 IntersectionComputations::IntersectionComputations(
-        float distance, Sphere object, Tuple point, Tuple eye, Tuple normal) :
+        float distance, Sphere object,
+        Tuple point, Tuple eye, Tuple normal) :
         _distance(distance),
         _object(object),
         _point(point),
@@ -16,6 +17,9 @@ IntersectionComputations::IntersectionComputations(
         _normal = -getNormal();
         _inside = true;
     }
+
+    //TODO: Figure out good epsilon
+    _overPoint = _point + _normal * std::numeric_limits<float>::epsilon() * 10000.0f;
 }
 
 float IntersectionComputations::getDistance() const {
@@ -41,4 +45,8 @@ Tuple IntersectionComputations::getNormal() const {
 
 bool IntersectionComputations::isInside() const {
     return _inside;
+}
+
+Tuple IntersectionComputations::getOverPoint() const {
+    return _overPoint;
 }

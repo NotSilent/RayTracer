@@ -73,10 +73,11 @@ IntersectionResult World::getIntersectionResult(const Ray &ray) const {
 Color World::getShadeHit(const IntersectionComputations &comps) const {
     Color color;
 
-    for (const auto light : _lights) {
-        color = color + comps.getObject().getMaterial().lightning(
-                light, comps.getPoint(), comps.getEye(), comps.getNormal());
-    }
+//    for (const auto light : _lights) {
+    const auto inShadow = isInShadow(comps.getOverPoint());
+    color = color + comps.getObject().getMaterial().lightning(
+            getLight(0), comps.getPoint(), comps.getEye(), comps.getNormal(), inShadow);
+//    }
 
 //    color = comps.getObject().getMaterial().lightning(
 //            getLight(0), comps.getPoint(), comps.getEye(), comps.getNormal());
@@ -98,4 +99,16 @@ Color World::getColor(const Ray &ray) const {
 
 void World::setObjectMaterialAmbient(uint32_t index, float value) {
     _objects[index].setMaterialAmbient(value);
+}
+
+bool World::isInShadow(const Tuple &point) const {
+    const auto direction = getLight(0).getPosition() - point;
+    const auto distance = direction.getMagnitude();
+    const Ray ray(point, direction.getNormalized());
+    const auto ir = getIntersectionResult(ray);
+    if (ir.getHit().has_value() && ir.getHit().value().getDistance() < distance) {
+        return true;
+    }
+
+    return false;
 }

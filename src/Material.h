@@ -32,7 +32,8 @@ public:
 
     [[nodiscard]] Color lightning(
             const PointLight &light,
-            const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector) const;
+            const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector,
+            bool isInShadow) const;
 
     void setAmbient(float value);
 

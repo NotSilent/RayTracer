@@ -47,6 +47,8 @@ public:
 
     [[nodiscard]] Color getColor(const Ray &ray) const;
 
+    [[nodiscard]] bool isInShadow(const Tuple &point) const;
+
     static World createDefaultWorld();
 
 private:

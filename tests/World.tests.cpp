@@ -181,3 +181,59 @@ TEST_CASE("An arbitrary view transformation") {
 
     REQUIRE(t == mat);
 }
+
+TEST_CASE("There is no shadow when nothing is collinear with point and light") {
+    const auto w = World::createDefaultWorld();
+    const auto p = Tuple::point(0.0f, 10.0f, 0.0f);
+
+    REQUIRE(w.isInShadow(p) == false);
+}
+
+TEST_CASE("The shadow when an object is between the point and the light") {
+    const auto w = World::createDefaultWorld();
+    const auto p = Tuple::point(10.0f, -10.0f, 10.0f);
+
+    REQUIRE(w.isInShadow(p) == true);
+}
+
+TEST_CASE("There is no shadow when an object is behind the light") {
+    const auto w = World::createDefaultWorld();
+    const auto p = Tuple::point(-20.0f, 20.0f, -20.0f);
+
+    REQUIRE(w.isInShadow(p) == false);
+}
+
+TEST_CASE("There is no shadow when an object is behind the point") {
+    const auto w = World::createDefaultWorld();
+    const auto p = Tuple::point(-2.0f, 2.0f, -2.0f);
+
+    REQUIRE(w.isInShadow(p) == false);
+}
+
+TEST_CASE("shade_hit() is given an intersection in shadow") {
+    World w;
+    w.addLight(PointLight(Tuple::point(0.0f, 0.0f, -10.f),
+                          Color(1.0f, 1.0f, 1.0f)));
+    const Sphere s1;
+    const Sphere s2(Mat4::translation(0.0f, 0.0f, 10.0f));
+    w.addObject(s1);
+    w.addObject(s2);
+    const Ray r(Tuple::point(0.0f, 0.0f, 5.0f),
+                Tuple::vector(0.0f, 0.0f, 1.0f));
+    const Intersection i(4.0f, s2);
+    const IntersectionComputations comps = i.getComputations(r);
+    const auto c = w.getShadeHit(comps);
+
+    REQUIRE(c == Color(0.1f, 0.1f, 0.1f));
+}
+
+TEST_CASE("The hit should offset the point") {
+    const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
+                Tuple::vector(0.0f, 0.0f, 1.0f));
+    const Sphere shape(Mat4::translation(0.0f, 0.0f, 1.0f));
+    const Intersection i(5.0f, shape);
+    const auto comps = i.getComputations(r);
+
+    REQUIRE(comps.getOverPoint().getZ() < -std::numeric_limits<float>::epsilon() / 2);
+    REQUIRE(comps.getPoint().getZ() > comps.getOverPoint().getZ());
+}

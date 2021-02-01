@@ -11,7 +11,8 @@
 class IntersectionComputations {
 public:
     IntersectionComputations(
-            float distance, Sphere object, Tuple point, Tuple eye, Tuple normal);
+            float distance, Sphere object,
+            Tuple point, Tuple eye, Tuple normal);
 
     [[nodiscard]] float getDistance() const;
 
@@ -23,6 +24,8 @@ public:
 
     [[nodiscard]] Tuple getNormal() const;
 
+    [[nodiscard]] Tuple getOverPoint() const;
+
     [[nodiscard]] bool isInside() const;
 
 private:
@@ -31,6 +34,7 @@ private:
     Tuple _point;
     Tuple _eye;
     Tuple _normal;
+    Tuple _overPoint;
     bool _inside;
 };
 

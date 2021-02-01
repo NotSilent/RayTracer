@@ -34,9 +34,7 @@ int main() {
                       Mat4::scaling(0.33f, 0.33f, 0.33f), green);
     World w;
     w.addLight(PointLight(Tuple::point(-10.0f, 10.0f, -10.0f),
-                          Color(0.0f, 1.0f, 1.0f)));
-    w.addLight(PointLight(Tuple::point(10.0f, 10.0f, -10.0f),
-                          Color(1.0f, 1.0f, 0.0f)));
+                          Color(1.0f, 1.0f, 1.0f)));
     w.addObject(floor);
     w.addObject(leftWall);
     w.addObject(rightWall);

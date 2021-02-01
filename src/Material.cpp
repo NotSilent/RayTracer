@@ -44,13 +44,14 @@ bool Material::operator==(const Material &other) const {
 }
 
 Color Material::lightning(const PointLight &light, const Tuple &point, const Tuple &eyeVector,
-                          const Tuple &normalVector) const {
+                          const Tuple &normalVector,
+                          bool isInShadow) const {
     const auto effectiveColor = getColor() * light.getIntensity();
     const auto lightVector = (light.getPosition() - point).getNormalized();
     const auto ambient = effectiveColor * getAmbient();
     const auto lightDotNormal = Tuple::dot(lightVector, normalVector);
 
-    if (lightDotNormal < 0.0f) {
+    if (isInShadow || lightDotNormal < 0.0f) {
         return ambient;
     } else {
         const auto diffuse = effectiveColor * getDiffuse() * lightDotNormal;
