@@ -67,7 +67,7 @@ Canvas Camera::getRender(const World &world) const {
     Canvas canvas(getWidth(), getHeight());
 
     for (uint32_t y = 0; y < getHeight(); ++y) {
-        for (uint32_t x = 0; x < getHeight(); ++x) {
+        for (uint32_t x = 0; x < getWidth(); ++x) {
             const auto ray = getRay(x, y);
             const auto color = world.getColor(ray);
             canvas.setColor(x, y, color);
