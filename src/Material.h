@@ -14,6 +14,8 @@ class Material {
 public:
     Material();
 
+    Material(const Color &color, float ambient, float diffuse, float specular, float shininess);
+
     [[nodiscard]] Color getColor() const;
 
     [[nodiscard]] float getAmbient() const;
@@ -28,11 +30,11 @@ public:
 
     bool operator==(const Material &other) const;
 
-    static std::shared_ptr<Material> getDefaultMaterial();
-
     [[nodiscard]] Color lightning(
             const PointLight &light,
             const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector) const;
+
+    void setAmbient(float value);
 
 private:
     Color _color;

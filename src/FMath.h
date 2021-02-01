@@ -22,6 +22,8 @@ public:
     static float sin(float value);
 
     static float cos(float value);
+
+    static float tan(float value);
 };
 
 #endif //RAYTRACERCHALLENGE_FMATH_H

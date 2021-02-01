@@ -3,13 +3,24 @@
 //
 
 #include "Sphere.h"
+
+#include <utility>
 #include "Ray.h"
 #include "IntersectionResult.h"
-#include "Material.h"
 
 Sphere::Sphere() :
         _transform(Mat4::identity()),
-        _material(Material::getDefaultMaterial()) {
+        _material() {
+}
+
+Sphere::Sphere(const Mat4 &transform) : _transform(transform), _material() {
+}
+
+Sphere::Sphere(const Material &material) : _transform(Mat4::identity()), _material(material) {
+}
+
+Sphere::Sphere(const Mat4 &transform, const Material &material) :
+        _transform(transform), _material(material) {
 }
 
 bool Sphere::operator==(const Sphere &other) const {
@@ -29,7 +40,7 @@ IntersectionResult Sphere::getIntersectionResult(const Ray &ray) const {
     const auto b = 2.0f * Tuple::dot(transformedRay.getDirection(), sphereToRay);
     const auto c = Tuple::dot(sphereToRay, sphereToRay) - 1.0f;
 
-    const float discriminant = b * b - 4 * a * c;
+    const float discriminant = (b * b) - (4 * a * c);
 
     if (discriminant < 0.0f) {
         return IntersectionResult();
@@ -52,9 +63,6 @@ void Sphere::setTransform(const Mat4 &transform) {
     _transform = transform;
 }
 
-Sphere::Sphere(const Mat4 &other) : _transform(other) {
-}
-
 Tuple Sphere::getNormalAt(const Tuple &point) const {
     const auto objectPoint = _transform.inversed() * point;
     const auto objectNormal = objectPoint - Tuple::point(0.0f, 0.0f, 0.0f);
@@ -63,6 +71,10 @@ Tuple Sphere::getNormalAt(const Tuple &point) const {
     return worldNormal.getNormalized();
 }
 
-std::shared_ptr<Material> Sphere::getMaterial() const {
+Material Sphere::getMaterial() const {
     return _material;
+}
+
+void Sphere::setMaterialAmbient(float value) {
+    _material.setAmbient(value);
 }

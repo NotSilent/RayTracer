@@ -15,3 +15,12 @@ Color PointLight::getIntensity() const {
 Tuple PointLight::getPosition() const {
     return _position;
 }
+
+bool PointLight::operator!=(const PointLight &other) const {
+    return getPosition() != other.getPosition() ||
+           getIntensity() != other.getIntensity();
+}
+
+bool PointLight::operator==(const PointLight &other) const {
+    return !(*this != other);
+}

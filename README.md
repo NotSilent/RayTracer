@@ -1,3 +1,3 @@
-# The Ray Tracer Challenge C++
+# C++ Ray Tracer
 
-Implementation in C++ using static inheritance
+Implementation based on book The Ray Tracer Challenge by by Jamis Buck

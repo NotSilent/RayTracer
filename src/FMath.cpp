@@ -26,3 +26,7 @@ float FMath::sin(float value) {
 float FMath::cos(float value) {
     return cosf(value);
 }
+
+float FMath::tan(float value) {
+    return tanf(value);
+}

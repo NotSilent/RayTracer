@@ -31,12 +31,6 @@ float Material::getShininess() const {
     return _shininess;
 }
 
-std::shared_ptr<Material> Material::getDefaultMaterial() {
-    static auto mat = std::make_shared<Material>();
-
-    return mat;
-}
-
 bool Material::operator!=(const Material &other) const {
     return _color != other._color ||
            _ambient != other._ambient ||
@@ -72,4 +66,16 @@ Color Material::lightning(const PointLight &light, const Tuple &point, const Tup
             return ambient + diffuse + specular;
         }
     }
+}
+
+Material::Material(const Color &color, float ambient, float diffuse, float specular, float shininess) :
+        _color(color),
+        _ambient(ambient),
+        _diffuse(diffuse),
+        _specular(specular),
+        _shininess(shininess) {
+}
+
+void Material::setAmbient(float value) {
+    _ambient = value;
 }

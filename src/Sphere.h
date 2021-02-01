@@ -5,20 +5,22 @@
 #ifndef RAYTRACERCHALLENGE_SPHERE_H
 #define RAYTRACERCHALLENGE_SPHERE_H
 
-#include "Intersection.h"
 #include "Matrix.h"
+#include "Material.h"
 
 class Ray;
 
 class IntersectionResult;
 
-class Material;
-
 class Sphere {
 public:
     Sphere();
 
-    explicit Sphere(const Mat4 &other);
+    explicit Sphere(const Mat4 &transform);
+
+    explicit Sphere(const Material &other);
+
+    Sphere(const Mat4 &transform, const Material &material);
 
     bool operator==(const Sphere &other) const;
 
@@ -30,13 +32,16 @@ public:
 
     [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray) const;
 
-    [[nodiscard]] std::shared_ptr<Material> getMaterial() const;
+    [[nodiscard]] Material getMaterial() const;
+
+    void setMaterialAmbient(float value);
 
 private:
     Mat4 _transform;
 
-    std::shared_ptr<Material> _material;
+    Material _material;
 };
 
+static_assert(std::is_trivially_copyable<Sphere>::value, "Sphere has to be trivially copyable!");
 
 #endif //RAYTRACERCHALLENGE_SPHERE_H

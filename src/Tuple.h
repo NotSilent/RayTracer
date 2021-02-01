@@ -6,6 +6,7 @@
 #define RAYTRACERCHALLENGE_TUPLE_H
 
 #include <ostream>
+#include <array>
 
 class Tuple {
 public:
@@ -56,7 +57,7 @@ public:
 
     [[nodiscard]] Tuple getNormalized() const;
 
-    [[nodiscard]] Tuple getReflected(const Tuple& normal) const;
+    [[nodiscard]] Tuple getReflected(const Tuple &normal) const;
 
     friend std::ostream &operator<<(std::ostream &os, Tuple const &value);
 
@@ -65,7 +66,9 @@ public:
     [[nodiscard]] static Tuple cross(const Tuple &lhs, const Tuple &rhs);
 
 private:
-    float _buffer[4];
+    std::array<float, 4> _buffer;
 };
+
+static_assert(std::is_trivially_copyable<Tuple>::value, "Tuple has to be trivially copyable!");
 
 #endif //RAYTRACERCHALLENGE_TUPLE_H

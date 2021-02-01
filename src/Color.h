@@ -6,6 +6,7 @@
 #define RAYTRACERCHALLENGE_COLOR_H
 
 #include "Tuple.h"
+#include <array>
 
 class Color {
 public:
@@ -40,13 +41,11 @@ public:
     friend std::ostream &operator<<(std::ostream &os, Color const &value);
 
 private:
-    float _r;
-    float _g;
-    float _b;
+    std::array<float, 3> _buffer;
 
-    static uint32_t clampInt(uint32_t);
     static uint32_t floatToInt(float value);
 };
 
+static_assert(std::is_trivially_copyable<Color>::value, "Color has to be trivially copyable!");
 
 #endif //RAYTRACERCHALLENGE_COLOR_H

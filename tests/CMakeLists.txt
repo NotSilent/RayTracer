@@ -9,10 +9,12 @@ add_executable(Tests main.test.cpp
         Canvas.tests.cpp
         Matrix.tests.cpp
         Ray.tests.cpp
-        Light.tests.cpp)
+        Light.tests.cpp
+        World.tests.cpp
+        Camera.tests.cpp)
 
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 target_link_libraries(Tests Catch)
 
-target_include_directories(FMath PUBLIC ../src)
-target_link_libraries(Tests FMath)
+target_include_directories(Common PUBLIC ../src)
+target_link_libraries(Tests Common)

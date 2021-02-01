@@ -23,6 +23,8 @@ public:
 
     [[nodiscard]] Intersection get(unsigned int index) const;
 
+    void add(IntersectionResult &&other);
+
 private:
     std::vector<Intersection> _intersections;
 };

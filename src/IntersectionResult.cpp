@@ -4,6 +4,7 @@
 
 #include "IntersectionResult.h"
 #include "Intersection.h"
+#include <algorithm>
 
 IntersectionResult::IntersectionResult() {
 
@@ -27,19 +28,30 @@ std::optional<Intersection> IntersectionResult::getHit() const {
         return std::nullopt;
     }
 
-    int index = -1;
+    bool found = false;
+    uint32_t index = 0;
     float min = std::numeric_limits<float>::max();
 
-    for (unsigned int i = 0; i < _intersections.size(); ++i) {
+    for (uint32_t i = 0; i < _intersections.size(); ++i) {
         if (_intersections[i].getDistance() < min && _intersections[i].getDistance() >= 0) {
             min = _intersections[i].getDistance();
             index = i;
+
+            found = true;
         }
     }
 
-    if (index == -1)
-        return std::nullopt;
-    else {
+    if (found)
         return _intersections[index];
+    else {
+        return std::nullopt;
     }
+}
+
+void IntersectionResult::add(IntersectionResult &&other) {
+    _intersections.insert(_intersections.end(),
+                          other._intersections.begin(),
+                          other._intersections.end());
+
+    std::sort(_intersections.begin(), _intersections.end());
 }

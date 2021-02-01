@@ -12,13 +12,17 @@ class PointLight {
 public:
     PointLight(const Tuple &position, const Color &intensity);
 
+    bool operator!=(const PointLight &other) const;
+
+    bool operator==(const PointLight &other) const;
+
     [[nodiscard]] Color getIntensity() const;
 
     [[nodiscard]] Tuple getPosition() const;
 
 private:
-    Color _intensity;
     Tuple _position;
+    Color _intensity;
 };
 
 

@@ -6,14 +6,17 @@
 #define RAYTRACERCHALLENGE_INTERSECTION_H
 
 #include <ostream>
+#include "Sphere.h"
 
-class Sphere;
+class IntersectionComputations;
 
 class Intersection {
 public:
-    Intersection(float distance, const Sphere &object);
+    Intersection(float distance, Sphere object);
 
     bool operator==(const Intersection &other) const;
+
+    bool operator<(const Intersection &other) const;
 
     friend std::ostream &operator<<(std::ostream &os, const Intersection &value);
 
@@ -21,9 +24,11 @@ public:
 
     [[nodiscard]] Sphere getObject() const;
 
+    [[nodiscard]] IntersectionComputations getComputations(const Ray &ray) const;
+
 private:
     float _distance;
-    const Sphere &_object;
+    Sphere _object;
 };
 
 #endif //RAYTRACERCHALLENGE_INTERSECTION_H

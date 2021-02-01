@@ -7,11 +7,7 @@
 Tuple::Tuple() : Tuple(0.0f, 0.0f, 0.0f, 0.0f) {
 }
 
-Tuple::Tuple(float x, float y, float z, float w) {
-    _buffer[0] = x;
-    _buffer[1] = y;
-    _buffer[2] = z;
-    _buffer[3] = w;
+Tuple::Tuple(float x, float y, float z, float w) : _buffer{x, y, z, w} {
 }
 
 Tuple Tuple::point(float x, float y, float z) {

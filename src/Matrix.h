@@ -6,7 +6,7 @@
 #define RAYTRACERCHALLENGE_MATRIX_H
 
 #include <cstdint>
-#include <vector>
+#include <array>
 #include <sstream>
 #include <exception>
 #include "FMath.h"
@@ -15,15 +15,54 @@
 template<uint32_t DIMENSION>
 class Matrix {
 public:
-    Matrix() {
-        _buffer = std::vector<float>(DIMENSION * DIMENSION);
-    }
-
-    Matrix(std::initializer_list<float> list) {
-        _buffer = std::vector<float>{list};
+    Matrix() : _buffer(std::array<float, DIMENSION * DIMENSION>()) {
     }
 
     ~Matrix() = default;
+
+    template<uint32_t D = DIMENSION>
+    requires (D == 2)
+    Matrix<DIMENSION>(float v0, float v1, float v2, float v3) :
+            _buffer{v0, v1,
+                    v2, v3} {
+    }
+
+    template<uint32_t D = DIMENSION>
+    requires (D == 3)
+    Matrix<DIMENSION>(float v0, float v1, float v2,
+                      float v3, float v4, float v5,
+                      float v6, float v7, float v8) :
+            _buffer{v0, v1, v2,
+                    v3, v4, v5,
+                    v6, v7, v8} {
+    }
+
+    template<uint32_t D = DIMENSION>
+    requires (D == 4)
+    Matrix<DIMENSION>(float v0, float v1, float v2, float v3,
+                      float v4, float v5, float v6, float v7,
+                      float v8, float v9, float v10, float v11,
+                      float v12, float v13, float v14, float v15) :
+            _buffer{v0, v1, v2, v3,
+                    v4, v5, v6, v7,
+                    v8, v9, v10, v11,
+                    v12, v13, v14, v15} {
+    }
+
+    template<uint32_t D = DIMENSION>
+    [[nodiscard]] typename std::enable_if<(D == 4), Matrix<DIMENSION>>::type
+    static getViewTransform(const Tuple &from, const Tuple &to, const Tuple &up) {
+        const auto forward = (to - from).getNormalized();
+        const auto left = Tuple::cross(forward, up.getNormalized());
+        const auto trueUp = Tuple::cross(left, forward);
+
+        const Matrix<DIMENSION> orientation(left.getX(), left.getY(), left.getZ(), 0.0f,
+                                            trueUp.getX(), trueUp.getY(), trueUp.getZ(), 0.0f,
+                                            -forward.getX(), -forward.getY(), -forward.getZ(), 0.0f,
+                                            0.0f, 0.0f, 0.0f, 1.0f);
+
+        return orientation * translation(-from.getX(), -from.getY(), -from.getZ());
+    }
 
     template<uint32_t D = DIMENSION>
     [[nodiscard]] typename std::enable_if<(D == 4), Matrix<DIMENSION>>::type
@@ -241,11 +280,15 @@ private:
     }
 
 protected:
-    std::vector<float> _buffer;
+    std::array<float, DIMENSION * DIMENSION> _buffer;
 };
 
 using Mat2 = Matrix<2>;
 using Mat3 = Matrix<3>;
 using Mat4 = Matrix<4>;
+
+static_assert(std::is_trivially_copyable<Mat2>::value, "Mat2 has to be trivially copyable");
+static_assert(std::is_trivially_copyable<Mat3>::value, "Mat3 has to be trivially copyable");
+static_assert(std::is_trivially_copyable<Mat4>::value, "Mat4 has to be trivially copyable");
 
 #endif //RAYTRACERCHALLENGE_MATRIX_H

@@ -5,18 +5,19 @@
 #include <Sphere.h>
 #include <Ray.h>
 #include "Tuple.h"
-#include "Matrix.h"
 #include "IntersectionResult.h"
-#include "Material.h"
 #include "PointLight.h"
+#include <chrono>
 
-const uint32_t WIDTH = 640;
-const uint32_t HEIGHT = 480;
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
 
 Color getColor(const Sphere &s, const Tuple &origin, const PointLight &light,
                uint32_t x, uint32_t y);
 
 int main() {
+    auto t1 = std::chrono::high_resolution_clock::now();
+
     Canvas canvas(WIDTH, HEIGHT);
 
     const Sphere s;
@@ -31,6 +32,12 @@ int main() {
             canvas.setColor(x, y, color);
         }
     }
+
+    auto t2 = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+
+    std::cout << "Duration: " << duration << "\n";
 
     //std::cout << std::filesystem::current_path() << "\n";
 
@@ -64,5 +71,5 @@ Color getColor(const Sphere &s, const Tuple &origin, const PointLight &light,
     const auto normal = hit->getObject().getNormalAt(point);
     const auto eye = -ray.getDirection();
 
-    return hit->getObject().getMaterial()->lightning(light, point, eye, normal);
+    return hit->getObject().getMaterial().lightning(light, point, eye, normal);
 }

@@ -7,20 +7,20 @@
 #include "FMath.h"
 
 
-Color::Color(float r, float g, float b) : _r(r), _g(g), _b(b) {
+Color::Color(float r, float g, float b) : _buffer{r, g, b} {
 
 }
 
 float Color::getRed() const {
-    return _r;
+    return _buffer[0];
 }
 
 float Color::getGreen() const {
-    return _g;
+    return _buffer[1];
 }
 
 float Color::getBlue() const {
-    return _b;
+    return _buffer[2];
 }
 
 bool Color::operator==(const Color &other) const {

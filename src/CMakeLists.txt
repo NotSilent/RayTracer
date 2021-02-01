@@ -1,4 +1,4 @@
-add_library(FMath
+add_library(Common
         FMath.h Fmath.cpp
         Tuple.h Tuple.cpp
         Color.h Color.cpp
@@ -9,4 +9,7 @@ add_library(FMath
         Intersection.h Intersection.cpp
         IntersectionResult.h IntersectionResult.cpp
         PointLight.h PointLight.cpp
-        Material.h Material.cpp)
+        Material.h Material.cpp
+        World.h World.cpp
+        IntersectionComputations.h IntersectionComputations.cpp
+        Camera.h Camera.cpp)
