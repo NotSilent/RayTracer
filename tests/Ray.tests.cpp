@@ -6,9 +6,11 @@
 #include <Ray.h>
 #include <Sphere.h>
 #include <Matrix.h>
+#include <Shape.h>
 #include "catch.hpp"
 #include "Intersection.h"
 #include "IntersectionResult.h"
+#include "TestShape.h"
 
 TEST_CASE("Creating and querying a ray") {
     const auto origin = Tuple::point(1.0f, 2.0f, 3.0f);
@@ -32,8 +34,8 @@ TEST_CASE("Computing a point from a distance") {
 TEST_CASE("A ray intersects a sphere at two points") {
     const Ray ray(Tuple::point(0.0f, 0.0f, -5.0f),
                   Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
-    const auto intersects = sphere.getIntersectionResult(ray);
+    auto sphere = std::make_shared<Sphere>();
+    const auto intersects = sphere->getIntersectionResult(ray);
 
     REQUIRE(intersects.getCount() == 2);
     REQUIRE(intersects.get(0).getDistance() == 4.0f);
@@ -43,8 +45,8 @@ TEST_CASE("A ray intersects a sphere at two points") {
 TEST_CASE("A ray intersects a sphere at a tangent") {
     const Ray ray(Tuple::point(0.0f, 1.0f, -5.0f),
                   Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
-    const auto intersects = sphere.getIntersectionResult(ray);
+    auto sphere = std::make_shared<Sphere>();
+    const auto intersects = sphere->getIntersectionResult(ray);
 
     REQUIRE(intersects.getCount() == 2);
     REQUIRE(intersects.get(0).getDistance() == 5.0f);
@@ -54,8 +56,8 @@ TEST_CASE("A ray intersects a sphere at a tangent") {
 TEST_CASE("A ray misses a sphere") {
     const Ray ray(Tuple::point(0.0f, 2.0f, -5.0f),
                   Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
-    const auto intersects = sphere.getIntersectionResult(ray);
+    auto sphere = std::make_shared<Sphere>();
+    const auto intersects = sphere->getIntersectionResult(ray);
 
     REQUIRE(intersects.getCount() == 0);
 }
@@ -63,8 +65,8 @@ TEST_CASE("A ray misses a sphere") {
 TEST_CASE("A ray originates inside a sphere") {
     const Ray ray(Tuple::point(0.0f, 0.0f, 0.0f),
                   Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
-    const auto intersects = sphere.getIntersectionResult(ray);
+    auto sphere = std::make_shared<Sphere>();
+    const auto intersects = sphere->getIntersectionResult(ray);
 
     REQUIRE(intersects.getCount() == 2);
     REQUIRE(intersects.get(0).getDistance() == -1.0f);
@@ -74,8 +76,8 @@ TEST_CASE("A ray originates inside a sphere") {
 TEST_CASE("A sphere is behind a ray") {
     const Ray ray(Tuple::point(0.0f, 0.0f, 5.0f),
                   Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
-    const auto intersects = sphere.getIntersectionResult(ray);
+    auto sphere = std::make_shared<Sphere>();
+    const auto intersects = sphere->getIntersectionResult(ray);
 
     REQUIRE(intersects.getCount() == 2);
     REQUIRE(intersects.get(0).getDistance() == -6.0f);
@@ -83,7 +85,7 @@ TEST_CASE("A sphere is behind a ray") {
 }
 
 TEST_CASE("An intersection encapsulates t and object") {
-    const Sphere s;
+    const auto s = std::make_shared<Sphere>();
     const Intersection i(3.5f, s);
 
     REQUIRE(i.getDistance() == 3.5f);
@@ -91,7 +93,7 @@ TEST_CASE("An intersection encapsulates t and object") {
 }
 
 TEST_CASE("Aggregating intersections") {
-    const Sphere s;
+    const auto s = std::make_shared<Sphere>();
     const Intersection i1(1.0f, s);
     const Intersection i2(2.0f, s);
 
@@ -105,8 +107,8 @@ TEST_CASE("Aggregating intersections") {
 TEST_CASE("Intersect sets the object on the intersection") {
     const Ray r(Tuple::point(0.0f, 0.0f, 5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere s;
-    const auto ir = s.getIntersectionResult(r);
+    const auto s = std::make_shared<Sphere>();
+    const auto ir = s->getIntersectionResult(r);
 
     REQUIRE(ir.getCount() == 2);
     REQUIRE(ir.get(0).getObject() == s);
@@ -114,7 +116,7 @@ TEST_CASE("Intersect sets the object on the intersection") {
 }
 
 TEST_CASE("The hit, when all intersections have positive t") {
-    const Sphere s;
+    const auto s = std::make_shared<Sphere>();
     const Intersection i1(1.0f, s);
     const Intersection i2(2.0f, s);
     const IntersectionResult ir{i2, i1};
@@ -124,7 +126,7 @@ TEST_CASE("The hit, when all intersections have positive t") {
 }
 
 TEST_CASE("The hit, when some intersections have negative t") {
-    const Sphere s;
+    const auto s = std::make_shared<Sphere>();
     const Intersection i1(-1.0f, s);
     const Intersection i2(1.0f, s);
     const IntersectionResult ir{i2, i1};
@@ -134,7 +136,7 @@ TEST_CASE("The hit, when some intersections have negative t") {
 }
 
 TEST_CASE("The hit, when all intersections have negative t") {
-    const Sphere s;
+    const auto s = std::make_shared<Sphere>();
     const Intersection i1(-2.0f, s);
     const Intersection i2(-1.0f, s);
     const IntersectionResult ir{i2, i1};
@@ -144,7 +146,7 @@ TEST_CASE("The hit, when all intersections have negative t") {
 }
 
 TEST_CASE("The hit is always the lowest non-negative intersection") {
-    const Sphere s;
+    const auto s = std::make_shared<Sphere>();
     const Intersection i1(5.0f, s);
     const Intersection i2(7.0f, s);
     const Intersection i3(-3.0f, s);
@@ -175,36 +177,38 @@ TEST_CASE("Scaling a ray") {
     REQUIRE(r2.getDirection() == Tuple::vector(0.0f, 3.0f, 0.0f));
 }
 
-TEST_CASE("A sphere's default transformation") {
-    const Sphere s;
+TEST_CASE("The default transformation") {
+    const TestShape s;
 
     REQUIRE(s.getTransform() == Mat4::identity());
 }
 
-TEST_CASE("Changing a sphere's transformation") {
-    Sphere s;
+TEST_CASE("Assigning a transformation") {
+    TestShape s;
     const auto transform = Mat4::translation(2.0f, 3.0f, 4.0f);
     s.setTransform(transform);
 
     REQUIRE(s.getTransform() == transform);
 }
 
-TEST_CASE("Intersecting a scaled sphere with a ray") {
+TEST_CASE("Intersecting a scaled shape with a ray") {
     const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere s(Mat4::scaling(2.0f, 2.0f, 2.0f));
-    const auto ir = s.getIntersectionResult(r);
+    const auto s = std::make_shared<TestShape>(
+            Mat4::scaling(2.0f, 2.0f, 2.0f));
+    const auto ir = s->getIntersectionResult(r);
 
-    REQUIRE(ir.getCount() == 2);
-    REQUIRE(ir.get(0).getDistance() == 3.0f);
-    REQUIRE(ir.get(1).getDistance() == 7.0f);
+    REQUIRE(s->getSavedRay().getOrigin() == Tuple::point(0.0f, 0.0f, -2.5f));
+    REQUIRE(s->getSavedRay().getDirection() == Tuple::vector(0.0f, 0.0f, 0.5f));
 }
 
-TEST_CASE("Intersecting a translated sphere with a ray") {
+TEST_CASE("Intersecting a translated shape with a ray") {
     const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere s(Mat4::translation(5.0f, 0.0f, 0.0f));
-    const auto ir = s.getIntersectionResult(r);
+    const auto s = std::make_shared<TestShape>(
+            Mat4::translation(5.0f, 0.0f, 0.0f));
+    const auto ir = s->getIntersectionResult(r);
 
-    REQUIRE(ir.getCount() == 0);
+    REQUIRE(s->getSavedRay().getOrigin() == Tuple::point(-5.0f, 0.0f, -5.0f));
+    REQUIRE(s->getSavedRay().getDirection() == Tuple::vector(0.0f, 0.0f, 1.0f));
 }

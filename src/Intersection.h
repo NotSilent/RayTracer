@@ -12,7 +12,7 @@ class IntersectionComputations;
 
 class Intersection {
 public:
-    Intersection(float distance, Sphere object);
+    Intersection(float distance, std::shared_ptr<Shape> object);
 
     bool operator==(const Intersection &other) const;
 
@@ -22,13 +22,13 @@ public:
 
     [[nodiscard]] float getDistance() const;
 
-    [[nodiscard]] Sphere getObject() const;
+    [[nodiscard]] std::shared_ptr<Shape> getObject() const;
 
     [[nodiscard]] IntersectionComputations getComputations(const Ray &ray) const;
 
 private:
     float _distance;
-    Sphere _object;
+    std::shared_ptr<Shape> _object;
 };
 
 #endif //RAYTRACERCHALLENGE_INTERSECTION_H

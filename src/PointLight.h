@@ -10,6 +10,8 @@
 
 class PointLight {
 public:
+    PointLight() = default;
+
     PointLight(const Tuple &position, const Color &intensity);
 
     bool operator!=(const PointLight &other) const;

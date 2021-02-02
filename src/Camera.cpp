@@ -63,7 +63,7 @@ Ray Camera::getRay(uint32_t pixelX, uint32_t pixelY) const {
     return Ray(origin, direction);
 }
 
-Canvas Camera::getRender(const World &world) const {
+Canvas Camera::getRender(World &world) const {
     Canvas canvas(getWidth(), getHeight());
 
     for (uint32_t y = 0; y < getHeight(); ++y) {

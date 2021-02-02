@@ -33,7 +33,7 @@ public:
 
     [[nodiscard]] Ray getRay(uint32_t pixelX, uint32_t pixelY) const;
 
-    [[nodiscard]] Canvas getRender(const World &world) const;
+    [[nodiscard]] Canvas getRender(World &world) const;
 
 private:
     uint32_t _width;

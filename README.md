@@ -1,3 +1,3 @@
 # C++ Ray Tracer
 
-Implementation based on book The Ray Tracer Challenge by by Jamis Buck
+Implementation based on book The Ray Tracer Challenge by Jamis Buck

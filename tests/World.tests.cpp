@@ -15,7 +15,6 @@ TEST_CASE("Creating a world") {
     const World w;
 
     REQUIRE(w.getObjectCount() == 0);
-    REQUIRE(w.getLightCount() == 0);
 }
 
 TEST_CASE("The default world") {
@@ -29,13 +28,13 @@ TEST_CASE("The default world") {
     const Sphere s2(Mat4::scaling(0.5f, 0.5f, 0.5f));
     const auto w = World::createDefaultWorld();
 
-    REQUIRE(w.containsLight(p) == true);
+    REQUIRE(w.getLight() == p);
     REQUIRE(w.containsObject(s1) == true);
     REQUIRE(w.containsObject(s2) == true);
 }
 
 TEST_CASE("Intersect a world with a ray") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const Ray r(
             Tuple::point(0.0f, 0.0f, -5.0f),
             Tuple::vector(0.0f, 0.0f, 1.0f));
@@ -51,7 +50,7 @@ TEST_CASE("Intersect a world with a ray") {
 TEST_CASE("Precomputing the state of an intersection") {
     const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    Sphere shape;
+    auto shape = std::make_shared<Sphere>();
     const Intersection i(4.0f, shape);
     const auto comps = i.getComputations(r);
 
@@ -64,7 +63,7 @@ TEST_CASE("Precomputing the state of an intersection") {
 TEST_CASE("The hit, when an intersection occurs on the outside") {
     const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
+    auto sphere = std::make_shared<Sphere>();
     const Intersection i(4.0f, sphere);
     const auto comps = i.getComputations(r);
 
@@ -74,7 +73,7 @@ TEST_CASE("The hit, when an intersection occurs on the outside") {
 TEST_CASE("The hit, when an intersection occurs on the inside") {
     const Ray r(Tuple::point(0.0f, 0.0f, 0.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere sphere;
+    auto sphere = std::make_shared<Sphere>();
     const Intersection i(1.0f, sphere);
     const auto comps = i.getComputations(r);
 
@@ -85,7 +84,7 @@ TEST_CASE("The hit, when an intersection occurs on the inside") {
 }
 
 TEST_CASE("Shading an intersection") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
     const auto shape = w.getObject(0);
@@ -98,7 +97,7 @@ TEST_CASE("Shading an intersection") {
 
 TEST_CASE("Shading an intersection from the inside") {
     auto w = World::createDefaultWorld();
-    w.setLight(0, PointLight(
+    w.setLight(PointLight(
             Tuple::point(0.0f, 0.25f, 0.0f),
             Color(1.0f, 1.0f, 1.0f)));
     const Ray r(Tuple::point(0.0f, 0.f, 0.0f),
@@ -112,7 +111,7 @@ TEST_CASE("Shading an intersection from the inside") {
 }
 
 TEST_CASE("The color when a ray misses") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const Ray r(Tuple::point(0.0f, 0.f, -5.0f),
                 Tuple::vector(0.0f, 1.0f, 0.0f));
     const auto c = w.getColor(r);
@@ -121,7 +120,7 @@ TEST_CASE("The color when a ray misses") {
 }
 
 TEST_CASE("The color when a ray hits") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const Ray r(Tuple::point(0.0f, 0.f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
     const auto c = w.getColor(r);
@@ -138,7 +137,7 @@ TEST_CASE("The color with an intersection behind the ray") {
                 Tuple::vector(0.0f, 0.0f, -1.0f));
     const auto c = w.getColor(r);
 
-    REQUIRE(c == inner.getMaterial().getColor());
+    REQUIRE(c == inner->getMaterial().getColor());
 }
 
 TEST_CASE("The transformation matrix for the default orientation") {
@@ -183,28 +182,28 @@ TEST_CASE("An arbitrary view transformation") {
 }
 
 TEST_CASE("There is no shadow when nothing is collinear with point and light") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const auto p = Tuple::point(0.0f, 10.0f, 0.0f);
 
     REQUIRE(w.isInShadow(p) == false);
 }
 
 TEST_CASE("The shadow when an object is between the point and the light") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const auto p = Tuple::point(10.0f, -10.0f, 10.0f);
 
     REQUIRE(w.isInShadow(p) == true);
 }
 
 TEST_CASE("There is no shadow when an object is behind the light") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const auto p = Tuple::point(-20.0f, 20.0f, -20.0f);
 
     REQUIRE(w.isInShadow(p) == false);
 }
 
 TEST_CASE("There is no shadow when an object is behind the point") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const auto p = Tuple::point(-2.0f, 2.0f, -2.0f);
 
     REQUIRE(w.isInShadow(p) == false);
@@ -212,10 +211,11 @@ TEST_CASE("There is no shadow when an object is behind the point") {
 
 TEST_CASE("shade_hit() is given an intersection in shadow") {
     World w;
-    w.addLight(PointLight(Tuple::point(0.0f, 0.0f, -10.f),
+    w.setLight(PointLight(Tuple::point(0.0f, 0.0f, -10.f),
                           Color(1.0f, 1.0f, 1.0f)));
-    const Sphere s1;
-    const Sphere s2(Mat4::translation(0.0f, 0.0f, 10.0f));
+    auto s1 = std::make_shared<Sphere>();
+    auto s2 = std::make_shared<Sphere>
+            (Mat4::translation(0.0f, 0.0f, 10.0f));
     w.addObject(s1);
     w.addObject(s2);
     const Ray r(Tuple::point(0.0f, 0.0f, 5.0f),
@@ -230,7 +230,8 @@ TEST_CASE("shade_hit() is given an intersection in shadow") {
 TEST_CASE("The hit should offset the point") {
     const Ray r(Tuple::point(0.0f, 0.0f, -5.0f),
                 Tuple::vector(0.0f, 0.0f, 1.0f));
-    const Sphere shape(Mat4::translation(0.0f, 0.0f, 1.0f));
+    const auto shape = std::make_shared<Sphere>(
+            Mat4::translation(0.0f, 0.0f, 1.0f));
     const Intersection i(5.0f, shape);
     const auto comps = i.getComputations(r);
 

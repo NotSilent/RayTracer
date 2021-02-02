@@ -5,14 +5,9 @@
 #ifndef RAYTRACERCHALLENGE_SPHERE_H
 #define RAYTRACERCHALLENGE_SPHERE_H
 
-#include "Matrix.h"
-#include "Material.h"
+#include "Shape.h"
 
-class Ray;
-
-class IntersectionResult;
-
-class Sphere {
+class Sphere : public Shape {
 public:
     Sphere();
 
@@ -22,26 +17,12 @@ public:
 
     Sphere(const Mat4 &transform, const Material &material);
 
-    bool operator==(const Sphere &other) const;
-
-    [[nodiscard]] Mat4 getTransform() const;
-
-    void setTransform(const Mat4 &transform);
-
-    [[nodiscard]] Tuple getNormalAt(const Tuple &point) const;
-
-    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray) const;
-
-    [[nodiscard]] Material getMaterial() const;
-
-    void setMaterialAmbient(float value);
-
 private:
-    Mat4 _transform;
+    [[nodiscard]] Tuple
+    getNormalImplementation(const Tuple &localPoint) override;
 
-    Material _material;
+    [[nodiscard]] IntersectionResult
+    getIntersectionResultImplementation(const Ray &localRay) override;
 };
-
-static_assert(std::is_trivially_copyable<Sphere>::value, "Sphere has to be trivially copyable!");
 
 #endif //RAYTRACERCHALLENGE_SPHERE_H

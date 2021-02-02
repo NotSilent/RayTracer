@@ -21,39 +21,33 @@ class World {
 public:
     World() = default;
 
-    [[nodiscard]] uint32_t getLightCount() const;
-
     [[nodiscard]] uint32_t getObjectCount() const;
 
-    [[nodiscard]] PointLight getLight(uint32_t index) const;
+    [[nodiscard]] PointLight getLight() const;
 
-    [[nodiscard]] Sphere getObject(uint32_t index) const;
+    [[nodiscard]] std::shared_ptr<Shape> getObject(uint32_t index) const;
 
-    void setLight(uint32_t index, const PointLight &light);
+    void setLight(const PointLight &light);
 
     void setObjectMaterialAmbient(uint32_t index, float value);
 
-    void addLight(const PointLight &light);
+    void addObject(std::shared_ptr<Shape> object);
 
-    void addObject(const Sphere &object);
+    [[nodiscard]] bool containsObject(const Shape &object) const;
 
-    [[nodiscard]] bool containsLight(const PointLight &light) const;
+    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray);
 
-    [[nodiscard]] bool containsObject(const Sphere &object) const;
+    [[nodiscard]] Color getShadeHit(const IntersectionComputations &comps);
 
-    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray) const;
+    [[nodiscard]] Color getColor(const Ray &ray);
 
-    [[nodiscard]] Color getShadeHit(const IntersectionComputations &comps) const;
-
-    [[nodiscard]] Color getColor(const Ray &ray) const;
-
-    [[nodiscard]] bool isInShadow(const Tuple &point) const;
+    [[nodiscard]] bool isInShadow(const Tuple &point);
 
     static World createDefaultWorld();
 
 private:
-    std::vector<PointLight> _lights;
-    std::vector<Sphere> _objects;
+    PointLight _light;
+    std::vector<std::shared_ptr<Shape>> _objects;
 };
 
 

@@ -5,18 +5,19 @@
 #ifndef RAYTRACERCHALLENGE_INTERSECTIONCOMPUTATIONS_H
 #define RAYTRACERCHALLENGE_INTERSECTIONCOMPUTATIONS_H
 
+#include "Tuple.h"
 
-#include "Sphere.h"
+class Shape;
 
 class IntersectionComputations {
 public:
     IntersectionComputations(
-            float distance, Sphere object,
+            float distance, std::shared_ptr<Shape> object,
             Tuple point, Tuple eye, Tuple normal);
 
     [[nodiscard]] float getDistance() const;
 
-    [[nodiscard]] Sphere getObject() const;
+    [[nodiscard]] std::shared_ptr<Shape> getObject() const;
 
     [[nodiscard]] Tuple getPoint() const;
 
@@ -30,15 +31,12 @@ public:
 
 private:
     float _distance;
-    Sphere _object;
+    std::shared_ptr<Shape> _object;
     Tuple _point;
     Tuple _eye;
     Tuple _normal;
     Tuple _overPoint;
     bool _inside;
 };
-
-static_assert(std::is_trivially_copyable<IntersectionComputations>::value,
-              "Try to make it trivially copyable");
 
 #endif //RAYTRACERCHALLENGE_INTERSECTIONCOMPUTATIONS_H

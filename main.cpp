@@ -41,7 +41,7 @@ int main() {
     w.addObject(middle);
     w.addObject(right);
     w.addObject(left);
-    Camera c(640, 480, FMath::PI / 3.0f,
+    Camera c(1920, 1080, FMath::PI / 3.0f,
              Mat4::getViewTransform(
                      Tuple::point(0.0f, 1.5f, -5.0f),
                      Tuple::point(0.1f, 1.0f, 0.0f),

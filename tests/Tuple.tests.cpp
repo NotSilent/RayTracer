@@ -5,6 +5,7 @@
 #include "catch.hpp"
 #include "FMath.h"
 #include "Tuple.h"
+#include "TestShape.h"
 
 TEST_CASE("A tuple with w == 1.0f is a point") {
     const auto point = Tuple(0.0f, 0.0f, 0.0f, 1.0f);
@@ -156,56 +157,56 @@ TEST_CASE("The cross product of two vectors") {
 }
 
 TEST_CASE("The normal on a sphere at a point on the x axis") {
-    const Sphere s;
-    const auto n = s.getNormalAt(Tuple::point(1.0f, 0.0f, 0.0f));
+    Sphere s;
+    const auto n = s.getNormal(Tuple::point(1.0f, 0.0f, 0.0f));
 
     REQUIRE(n == Tuple::vector(1.0f, 0.0f, 0.0f));
 }
 
 TEST_CASE("The normal on a sphere at a point on the y axis") {
-    const Sphere s;
-    const auto n = s.getNormalAt(Tuple::point(0.0f, 1.0f, 0.0f));
+    Sphere s;
+    const auto n = s.getNormal(Tuple::point(0.0f, 1.0f, 0.0f));
 
     REQUIRE(n == Tuple::vector(0.0f, 1.0f, 0.0f));
 }
 
 TEST_CASE("The normal on a sphere at a point on the z axis") {
-    const Sphere s;
-    const auto n = s.getNormalAt(Tuple::point(0.0f, 0.0f, 1.0f));
+    Sphere s;
+    const auto n = s.getNormal(Tuple::point(0.0f, 0.0f, 1.0f));
 
     REQUIRE(n == Tuple::vector(0.0f, 0.0f, 1.0f));
 }
 
 TEST_CASE("The normal on a sphere at a non-axial point") {
-    const Sphere s;
+    Sphere s;
     const float result = FMath::sqrt(3.0f) / 3.0f;
-    const auto n = s.getNormalAt(Tuple::point(result, result, result));
+    const auto n = s.getNormal(Tuple::point(result, result, result));
 
     REQUIRE(n == Tuple::vector(result, result, result));
 }
 
 TEST_CASE("The normal is a getNormalized vector") {
-    const Sphere s;
+    Sphere s;
     const float result = FMath::sqrt(3.0f) / 3.0f;
-    const auto n = s.getNormalAt(Tuple::point(result, result, result));
+    const auto n = s.getNormal(Tuple::point(result, result, result));
 
     REQUIRE(n == n.getNormalized());
 }
 
-TEST_CASE("Computing the normal on a translated sphere") {
-    const Sphere s(Mat4::translation(0.0f, 1.0f, 0.0f));
-    const auto n = s.getNormalAt(
+TEST_CASE("Computing the normal on a translated shape") {
+    Sphere s(Mat4::translation(0.0f, 1.0f, 0.0f));
+    const auto n = s.getNormal(
             Tuple::point(0.0f, 1.70711f, -0.70711f));
 
     REQUIRE(n == Tuple::vector(0.0f, 0.70711f, -0.70711f));
 }
 
-TEST_CASE("Computing the normal on a transformed sphere") {
-    const Sphere s(
+TEST_CASE("Computing the normal on a transformed shape") {
+    Sphere s(
             Mat4::scaling(1.0f, 0.5f, 1.0f) *
             Mat4::rotation<Axis::Z>(FMath::PI / 5.0f));
     const float result = FMath::sqrt(2.0f) / 2.0f;
-    const auto n = s.getNormalAt(
+    const auto n = s.getNormal(
             Tuple::point(0.0f, result, -result));
 
     REQUIRE(n == Tuple::vector(0.0f, 0.97014f, -0.24254f));

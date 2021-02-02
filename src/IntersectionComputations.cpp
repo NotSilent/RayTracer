@@ -2,10 +2,11 @@
 // Created by SILENT on 31/01/2021.
 //
 
+#include <memory>
 #include "IntersectionComputations.h"
 
 IntersectionComputations::IntersectionComputations(
-        float distance, Sphere object,
+        float distance, std::shared_ptr<Shape> object,
         Tuple point, Tuple eye, Tuple normal) :
         _distance(distance),
         _object(object),
@@ -26,7 +27,7 @@ float IntersectionComputations::getDistance() const {
     return _distance;
 }
 
-Sphere IntersectionComputations::getObject() const {
+std::shared_ptr<Shape> IntersectionComputations::getObject() const {
     return _object;
 }
 

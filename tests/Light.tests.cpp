@@ -7,7 +7,9 @@
 #include <PointLight.h>
 #include <Material.h>
 #include <Sphere.h>
+#include <Shape.h>
 #include "catch.hpp"
+#include "TestShape.h"
 
 TEST_CASE("A point light has a position and intensity") {
     const Color intensity(1.0f, 1.0f, 1.0f);
@@ -29,10 +31,19 @@ TEST_CASE("The default material") {
 }
 
 TEST_CASE("A sphere has a default material") {
-    const Sphere s;
-    const auto m = s.getMaterial();
+    const auto s = std::make_shared<TestShape>();
+    const auto m = s->getMaterial();
 
     REQUIRE(m == Material());
+}
+
+TEST_CASE("Assigning a material") {
+    auto s = std::make_shared<TestShape>();
+    Material m;
+    m.setAmbient(1.0f);
+    s->setMaterial(m);
+
+    REQUIRE(m == s->getMaterial());
 }
 
 TEST_CASE("Lighting with the eye between the light and the surface") {

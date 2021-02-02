@@ -12,11 +12,11 @@ float Intersection::getDistance() const {
     return _distance;
 }
 
-Sphere Intersection::getObject() const {
+std::shared_ptr<Shape> Intersection::getObject() const {
     return _object;
 }
 
-Intersection::Intersection(float distance, Sphere object) :
+Intersection::Intersection(float distance, std::shared_ptr<Shape> object) :
         _distance(distance), _object(std::move(object)) {
 }
 
@@ -45,8 +45,8 @@ IntersectionComputations Intersection::getComputations(const Ray &ray) const {
 
     return IntersectionComputations(
             getDistance(),
-            Sphere(_object),
+            _object,
             position,
             -ray.getDirection(),
-            _object.getNormalAt(position));
+            _object->getNormal(position));
 }

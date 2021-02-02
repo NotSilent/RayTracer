@@ -3,6 +3,8 @@
 //
 
 #include "World.h"
+
+#include <memory>
 #include "IntersectionResult.h"
 #include "Ray.h"
 #include "IntersectionComputations.h"
@@ -11,72 +13,66 @@ uint32_t World::getObjectCount() const {
     return _objects.size();
 }
 
-uint32_t World::getLightCount() const {
-    return _lights.size();
+PointLight World::getLight() const {
+    return _light;
 }
 
-PointLight World::getLight(uint32_t index) const {
-    return _lights[index];
-}
-
-Sphere World::getObject(uint32_t index) const {
+std::shared_ptr<Shape> World::getObject(uint32_t index) const {
     return _objects[index];
 }
 
-void World::setLight(uint32_t index, const PointLight &light) {
-    _lights[index] = light;
+void World::setLight(const PointLight &light) {
+    _light = light;
 }
 
 World World::createDefaultWorld() {
     World w;
 
-    w.addLight(PointLight(
+    w.setLight(PointLight(
             Tuple::point(-10.0f, 10.0f, -10.0f),
             Color(1.0f, 1.0f, 1.0f)));
 
-    w.addObject(Sphere(Material(
+    w.addObject(std::make_shared<Sphere>(Material(
             Color(0.8f, 1.0f, 0.6f),
             0.1f, 0.7f, 0.2f, 200.0f)));
 
-    w.addObject(Sphere(Mat4::scaling(0.5f, 0.5f, 0.5f)));
+    w.addObject(std::make_shared<Sphere>(
+            Mat4::scaling(0.5f, 0.5f, 0.5f)));
 
     return w;
 }
 
-void World::addLight(const PointLight &light) {
-    _lights.emplace_back(light);
-}
-
-void World::addObject(const Sphere &object) {
+void World::addObject(std::shared_ptr<Shape> object) {
     _objects.emplace_back(object);
 }
 
-bool World::containsLight(const PointLight &light) const {
-    return std::find(_lights.begin(), _lights.end(), light) != _lights.end();
+bool World::containsObject(const Shape &object) const {
+    auto it = std::find_if(_objects.begin(), _objects.end(),
+                           [&](std::shared_ptr<Shape> const &current) {
+                               return *current == object;
+                           });
+
+    return it != _objects.end();
 }
 
-bool World::containsObject(const Sphere &object) const {
-    return std::find(_objects.begin(), _objects.end(), object) != _objects.end();
-}
-
-IntersectionResult World::getIntersectionResult(const Ray &ray) const {
+IntersectionResult World::getIntersectionResult(const Ray &ray) {
     IntersectionResult results;
 
-    for (const auto &object : _objects) {
-        auto ir = object.getIntersectionResult(ray);
+    for (auto &object : _objects) {
+        auto ir = object->getIntersectionResult(ray);
         results.add(std::move(ir));
     }
 
     return results;
 }
 
-Color World::getShadeHit(const IntersectionComputations &comps) const {
+Color World::getShadeHit(const IntersectionComputations &comps) {
     Color color;
 
 //    for (const auto light : _lights) {
     const auto inShadow = isInShadow(comps.getOverPoint());
-    color = color + comps.getObject().getMaterial().lightning(
-            getLight(0), comps.getPoint(), comps.getEye(), comps.getNormal(), inShadow);
+    color = color + comps.getObject()->getMaterial().lightning(
+            getLight(), comps.getPoint(), comps.getEye(), comps.getNormal(), inShadow);
 //    }
 
 //    color = comps.getObject().getMaterial().lightning(
@@ -85,7 +81,7 @@ Color World::getShadeHit(const IntersectionComputations &comps) const {
     return color;
 }
 
-Color World::getColor(const Ray &ray) const {
+Color World::getColor(const Ray &ray) {
     const auto ir = getIntersectionResult(ray);
     const auto hit = ir.getHit();
 
@@ -98,11 +94,11 @@ Color World::getColor(const Ray &ray) const {
 }
 
 void World::setObjectMaterialAmbient(uint32_t index, float value) {
-    _objects[index].setMaterialAmbient(value);
+    _objects[index]->setMaterialAmbient(value);
 }
 
-bool World::isInShadow(const Tuple &point) const {
-    const auto direction = getLight(0).getPosition() - point;
+bool World::isInShadow(const Tuple &point) {
+    const auto direction = getLight().getPosition() - point;
     const auto distance = direction.getMagnitude();
     const Ray ray(point, direction.getNormalized());
     const auto ir = getIntersectionResult(ray);

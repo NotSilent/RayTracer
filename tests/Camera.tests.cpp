@@ -62,7 +62,7 @@ TEST_CASE("Constructing a ray when the camera is transformed") {
 }
 
 TEST_CASE("Rendering a world with a camera") {
-    const auto w = World::createDefaultWorld();
+    auto w = World::createDefaultWorld();
     const auto m = Mat4::getViewTransform(
             Tuple::point(0.0f, 0.0f, -5.0f),
             Tuple::point(0.0f, 0.0f, 0.0f),

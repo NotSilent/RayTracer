@@ -4,6 +4,7 @@ add_library(Catch INTERFACE)
 
 # Add test executable
 add_executable(Tests main.test.cpp
+        TestShape.cpp TestShape.h
         Tuple.tests.cpp
         Color.tests.cpp
         Canvas.tests.cpp
