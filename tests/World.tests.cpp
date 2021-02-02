@@ -7,6 +7,7 @@
 #include <Sphere.h>
 #include <Ray.h>
 #include <IntersectionComputations.h>
+#include <Plane.h>
 #include "catch.hpp"
 #include "Material.h"
 #include "IntersectionResult.h"
@@ -237,4 +238,60 @@ TEST_CASE("The hit should offset the point") {
 
     REQUIRE(comps.getOverPoint().getZ() < -std::numeric_limits<float>::epsilon() / 2);
     REQUIRE(comps.getPoint().getZ() > comps.getOverPoint().getZ());
+}
+
+TEST_CASE("The normal of a plane is constant everywhere") {
+    Plane p;
+    const auto n1 = p.getNormal(
+            Tuple::point(0.0f, 0.0f, 0.0f));
+    const auto n2 = p.getNormal(
+            Tuple::point(10.0f, 0.0f, -10.0f));
+    const auto n3 = p.getNormal(
+            Tuple::point(-5.0f, 0.0f, 150.0f));
+
+    REQUIRE(n1 == Tuple::vector(0.0f, 1.0f, 0.0f));
+    REQUIRE(n2 == Tuple::vector(0.0f, 1.0f, 0.0f));
+    REQUIRE(n3 == Tuple::vector(0.0f, 1.0f, 0.0f));
+}
+
+TEST_CASE("Intersect with a ray parallel to the plane") {
+    Plane p;
+    const Ray r(
+            Tuple::point(0.0f, 10.0f, 0.0f),
+            Tuple::vector(0.0f, 0.0f, 1.0f));
+    const auto ir = p.getIntersectionResult(r);
+
+    REQUIRE(ir.getHit().has_value() == false);
+}
+
+TEST_CASE("Intersect with a coplanar ray") {
+    Plane p;
+    const Ray r(
+            Tuple::point(0.0f, 0.0f, 0.0f),
+            Tuple::vector(0.0f, 0.0f, 1.0f));
+    const auto ir = p.getIntersectionResult(r);
+
+    REQUIRE(ir.getHit().has_value() == false);
+}
+
+TEST_CASE("A ray intersecting a plane from above") {
+    auto p = std::make_shared<Plane>();
+    const Ray r(
+            Tuple::point(0.0f, 1.0f, 0.0f),
+            Tuple::vector(0.0f, -1.0f, 0.0f));
+    const auto ir = p->getIntersectionResult(r);
+
+    REQUIRE(ir.getCount() == 1);
+    REQUIRE(ir.get(0).getObject() == p);
+}
+
+TEST_CASE("A ray intersecting a plane from below") {
+    auto p = std::make_shared<Plane>();
+    const Ray r(
+            Tuple::point(0.0f, -1.0f, 0.0f),
+            Tuple::vector(0.0f, 1.0f, 0.0f));
+    const auto ir = p->getIntersectionResult(r);
+
+    REQUIRE(ir.getCount() == 1);
+    REQUIRE(ir.get(0).getObject() == p);
 }
