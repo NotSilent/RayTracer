@@ -71,8 +71,8 @@ Color World::getShadeHit(const IntersectionComputations &comps) {
 
 //    for (const auto light : _lights) {
     const auto inShadow = isInShadow(comps.getOverPoint());
-    color = color + comps.getObject()->getMaterial().lightning(
-            getLight(), comps.getPoint(), comps.getEye(), comps.getNormal(), inShadow);
+    color = color + comps.getObject().getMaterial().lightning(
+            getLight(), comps.getObject(), comps.getPoint(), comps.getEye(), comps.getNormal(), inShadow);
 //    }
 
 //    color = comps.getObject().getMaterial().lightning(

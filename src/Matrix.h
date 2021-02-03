@@ -188,9 +188,6 @@ public:
     }
 
     [[nodiscard]] friend bool operator==(const Matrix<DIMENSION> &lhs, const Matrix<DIMENSION> &rhs) {
-        //Tests need smaller precision
-        //TODO: Create some engine utils class and change it to constexpr
-#ifndef NDEBUG
         if (lhs._buffer.size() != rhs._buffer.size()) {
             return false;
         }
@@ -202,9 +199,6 @@ public:
         }
 
         return true;
-#else
-        return lhs._buffer == rhs._buffer;
-#endif
     }
 
     [[nodiscard]] friend bool operator!=(const Matrix<DIMENSION> &lhs, const Matrix<DIMENSION> &rhs) {

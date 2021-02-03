@@ -15,6 +15,8 @@ class FMath {
 public:
     static constexpr float PI = static_cast<float>(std::numbers::pi);
 
+    static constexpr float EPSILON = 1e-4f;
+
     static bool approximately(float lhs, float rhs);
 
     static float sqrt(float value);

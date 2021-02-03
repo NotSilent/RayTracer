@@ -5,8 +5,9 @@
 #ifndef RAYTRACERCHALLENGE_MATERIAL_H
 #define RAYTRACERCHALLENGE_MATERIAL_H
 
-
+#include <optional>
 #include "Color.h"
+#include "StripePattern.h"
 
 class PointLight;
 
@@ -31,11 +32,15 @@ public:
     bool operator==(const Material &other) const;
 
     [[nodiscard]] Color lightning(
-            const PointLight &light,
+            const PointLight &light, const Shape &object,
             const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector,
             bool isInShadow) const;
 
     void setAmbient(float value);
+
+    [[nodiscard]] std::shared_ptr<Pattern> getPattern() const;
+
+    void setPattern(std::shared_ptr<Pattern> pattern);
 
 private:
     Color _color;
@@ -43,7 +48,7 @@ private:
     float _diffuse;
     float _specular;
     float _shininess;
+    std::shared_ptr<Pattern> _pattern;
 };
-
 
 #endif //RAYTRACERCHALLENGE_MATERIAL_H

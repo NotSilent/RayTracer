@@ -17,7 +17,7 @@ public:
 
     [[nodiscard]] float getDistance() const;
 
-    [[nodiscard]] std::shared_ptr<Shape> getObject() const;
+    [[nodiscard]] const Shape &getObject() const;
 
     [[nodiscard]] Tuple getPoint() const;
 

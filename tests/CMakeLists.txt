@@ -12,7 +12,7 @@ add_executable(Tests main.test.cpp
         Ray.tests.cpp
         Light.tests.cpp
         World.tests.cpp
-        Camera.tests.cpp)
+        Camera.tests.cpp Pattern.tests.cpp)
 
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 target_link_libraries(Tests Catch)

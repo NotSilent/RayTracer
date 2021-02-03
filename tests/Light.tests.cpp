@@ -47,6 +47,7 @@ TEST_CASE("Assigning a material") {
 }
 
 TEST_CASE("Lighting with the eye between the light and the surface") {
+    const Sphere s;
     const Material m;
     const auto position = Tuple::point(0.0f, 0.0f, 0.0f);
     const auto eyeVector = Tuple::vector(0.0f, 0.0f, -1.0f);
@@ -54,12 +55,13 @@ TEST_CASE("Lighting with the eye between the light and the surface") {
     const PointLight light(
             Tuple::point(0.0f, 0.0f, -10.0f),
             Color(1.0f, 1.0f, 1.0f));
-    const auto result = m.lightning(light, position, eyeVector, normalVector, false);
+    const auto result = m.lightning(light, s, position, eyeVector, normalVector, false);
 
     REQUIRE(result == Color(1.9f, 1.9f, 1.9f));
 }
 
 TEST_CASE("Lighting with the eye between light and surface, eye offset 45°") {
+    const Sphere s;
     float angle = FMath::sqrt(2.0f) / 2.0f;
     const Material m;
     const auto position = Tuple::point(0.0f, 0.0f, 0.0f);
@@ -68,12 +70,13 @@ TEST_CASE("Lighting with the eye between light and surface, eye offset 45°") {
     const PointLight light(
             Tuple::point(0.0f, 0.0f, -10.0f),
             Color(1.0f, 1.0f, 1.0f));
-    const auto result = m.lightning(light, position, eyeVector, normalVector, false);
+    const auto result = m.lightning(light, s, position, eyeVector, normalVector, false);
 
     REQUIRE(result == Color(1.0f, 1.0f, 1.0f));
 }
 
 TEST_CASE("Lighting with eye opposite surface, light offset 45°") {
+    const Sphere s;
     const Material m;
     const auto position = Tuple::point(0.0f, 0.0f, 0.0f);
     const auto eyeVector = Tuple::vector(0.0f, 0.0f, -1.0f);
@@ -81,12 +84,13 @@ TEST_CASE("Lighting with eye opposite surface, light offset 45°") {
     const PointLight light(
             Tuple::point(0.0f, 10.0f, -10.0f),
             Color(1.0f, 1.0f, 1.0f));
-    const auto result = m.lightning(light, position, eyeVector, normalVector, false);
+    const auto result = m.lightning(light, s, position, eyeVector, normalVector, false);
 
     REQUIRE(result == Color(0.7364f, 0.7364f, 0.7364f));
 }
 
 TEST_CASE("Lighting with eye in the path of the reflection vector") {
+    const Sphere s;
     float angle = FMath::sqrt(2.0f) / 2.0f;
     const Material m;
     const auto position = Tuple::point(0.0f, 0.0f, 0.0f);
@@ -95,12 +99,13 @@ TEST_CASE("Lighting with eye in the path of the reflection vector") {
     const PointLight light(
             Tuple::point(0.0f, 10.0f, -10.0f),
             Color(1.0f, 1.0f, 1.0f));
-    const auto result = m.lightning(light, position, eyeVector, normalVector, false);
+    const auto result = m.lightning(light, s, position, eyeVector, normalVector, false);
 
     REQUIRE(result == Color(1.6364f, 1.6364f, 1.6364f));
 }
 
 TEST_CASE("Lighting with the light behind the surface") {
+    const Sphere s;
     const Material m;
     const auto position = Tuple::point(0.0f, 0.0f, 0.0f);
     const auto eyeVector = Tuple::vector(0.0f, 0.0f, -1.0f);
@@ -108,12 +113,13 @@ TEST_CASE("Lighting with the light behind the surface") {
     const PointLight light(
             Tuple::point(0.0f, 10.0f, 10.0f),
             Color(1.0f, 1.0f, 1.0f));
-    const auto result = m.lightning(light, position, eyeVector, normalVector, false);
+    const auto result = m.lightning(light, s, position, eyeVector, normalVector, false);
 
     REQUIRE(result == Color(0.1f, 0.1f, 0.1f));
 }
 
 TEST_CASE("") {
+    const Sphere s;
     const Material m;
     const auto position = Tuple::point(0.0f, 0.0f, 0.0f);
     const auto eye = Tuple::vector(0.0f, 0.0f, -1.0f);
@@ -121,7 +127,7 @@ TEST_CASE("") {
     const PointLight light(Tuple::point(0.0f, 0.0f, -10.0f),
                            Color(1.0f, 1.0f, 1.0f));
     const bool isInShadow = true;
-    const auto result = m.lightning(light, position, eye, normal, isInShadow);
+    const auto result = m.lightning(light, s, position, eye, normal, isInShadow);
 
     REQUIRE(result == Color(0.1f, 0.1f, 0.1f));
 }

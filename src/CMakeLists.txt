@@ -13,4 +13,4 @@ add_library(Common
         IntersectionComputations.h IntersectionComputations.cpp
         Camera.h Camera.cpp
         Shape.h Shape.cpp
-        Sphere.h Sphere.cpp Plane.cpp Plane.h)
+        Sphere.h Sphere.cpp Plane.cpp Plane.h StripePattern.cpp StripePattern.h Pattern.cpp Pattern.h GradientPattern.cpp GradientPattern.h RingPattern.cpp RingPattern.h CheckersPattern.cpp CheckersPattern.h)

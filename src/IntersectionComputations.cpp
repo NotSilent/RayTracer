@@ -3,13 +3,16 @@
 //
 
 #include <memory>
+#include <utility>
 #include "IntersectionComputations.h"
+#include "FMath.h"
+#include "Shape.h"
 
 IntersectionComputations::IntersectionComputations(
         float distance, std::shared_ptr<Shape> object,
         Tuple point, Tuple eye, Tuple normal) :
         _distance(distance),
-        _object(object),
+        _object(std::move(object)),
         _point(point),
         _eye(eye),
         _normal(normal),
@@ -19,16 +22,15 @@ IntersectionComputations::IntersectionComputations(
         _inside = true;
     }
 
-    //TODO: Figure out good epsilon
-    _overPoint = _point + _normal * std::numeric_limits<float>::epsilon() * 10000.0f;
+    _overPoint = _point + _normal * FMath::EPSILON;
 }
 
 float IntersectionComputations::getDistance() const {
     return _distance;
 }
 
-std::shared_ptr<Shape> IntersectionComputations::getObject() const {
-    return _object;
+const Shape &IntersectionComputations::getObject() const {
+    return *_object;
 }
 
 

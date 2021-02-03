@@ -6,13 +6,7 @@
 #include "FMath.h"
 
 bool FMath::approximately(float lhs, float rhs) {
-    //Tests need smaller precision
-    //TODO: Create some engine utils class and change it to constexpr
-#ifndef NDEBUG
-    return fabsf(lhs - rhs) < 1e-4f;
-#else
-    return fabsf(lhs - rhs) < std::numeric_limits<float>::epsilon();
-#endif
+    return fabsf(lhs - rhs) < EPSILON;
 }
 
 float FMath::sqrt(float value) {

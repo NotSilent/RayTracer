@@ -236,7 +236,7 @@ TEST_CASE("The hit should offset the point") {
     const Intersection i(5.0f, shape);
     const auto comps = i.getComputations(r);
 
-    REQUIRE(comps.getOverPoint().getZ() < -std::numeric_limits<float>::epsilon() / 2);
+    REQUIRE(comps.getOverPoint().getZ() < -FMath::EPSILON / 2);
     REQUIRE(comps.getPoint().getZ() > comps.getOverPoint().getZ());
 }
 

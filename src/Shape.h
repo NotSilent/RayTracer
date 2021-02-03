@@ -44,7 +44,7 @@ public:
 private:
     Mat4 _transform;
     Material _material;
-    std::optional<Ray> _savedRay;
+    std::optional<Ray> _savedRay; //TODO: remove and make everything const correct again
 
     [[nodiscard]] virtual Tuple
     getNormalImplementation(const Tuple &localPoint) = 0;

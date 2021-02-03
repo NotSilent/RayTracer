@@ -18,12 +18,12 @@ Plane::Plane(const Mat4 &transform, const Material &material) :
         Shape(transform, material) {
 }
 
-Tuple Plane::getNormalImplementation(const Tuple &localPoint) {
+Tuple Plane::getNormalImplementation([[maybe_unused]]const Tuple &localPoint) {
     return Tuple::vector(0.0f, 1.0f, 0.0f);
 }
 
 IntersectionResult Plane::getIntersectionResultImplementation(const Ray &localRay) {
-    if (std::abs(localRay.getDirection().getY()) < std::numeric_limits<float>::epsilon() * 10000.0f) {
+    if (std::abs(localRay.getDirection().getY()) < FMath::EPSILON) {
         return {};
     }
 

@@ -3,6 +3,8 @@
 //
 
 #include "Material.h"
+
+#include <utility>
 #include "PointLight.h"
 
 Material::Material() :
@@ -43,10 +45,16 @@ bool Material::operator==(const Material &other) const {
     return !(*this != other);
 }
 
-Color Material::lightning(const PointLight &light, const Tuple &point, const Tuple &eyeVector,
-                          const Tuple &normalVector,
+Color Material::lightning(const PointLight &light, const Shape &object,
+                          const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector,
                           bool isInShadow) const {
-    const auto effectiveColor = getColor() * light.getIntensity();
+    Color effectiveColor;
+    if (_pattern != nullptr) {
+        effectiveColor = _pattern->getColor(object, point) * light.getIntensity();
+    } else {
+        effectiveColor = getColor() * light.getIntensity();
+    }
+
     const auto lightVector = (light.getPosition() - point).getNormalized();
     const auto ambient = effectiveColor * getAmbient();
     const auto lightDotNormal = Tuple::dot(lightVector, normalVector);
@@ -79,4 +87,12 @@ Material::Material(const Color &color, float ambient, float diffuse, float specu
 
 void Material::setAmbient(float value) {
     _ambient = value;
+}
+
+std::shared_ptr<Pattern> Material::getPattern() const {
+    return _pattern;
+}
+
+void Material::setPattern(std::shared_ptr<Pattern> pattern) {
+    _pattern = std::move(pattern);
 }
