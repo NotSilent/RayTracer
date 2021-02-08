@@ -6,6 +6,8 @@
 #include "Ray.h"
 #include "Canvas.h"
 #include "World.h"
+#include <thread>
+#include <mutex>
 
 Camera::Camera(uint32_t width, uint32_t height, float fov) :
         _width(width), _height(height), _fov(fov), _transform(Mat4::identity()) {

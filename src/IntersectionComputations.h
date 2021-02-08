@@ -37,6 +37,8 @@ public:
 
     [[nodiscard]] float getRefractiveIndexEnter() const;
 
+    [[nodiscard]] float getReflectance() const;
+
     void setRefractiveIndexExit(float refractiveIndexOne);
 
     void setRefractiveIndexEnter(float refractiveIndexTwo);
@@ -49,13 +51,16 @@ private:
     Tuple _normal;
     Tuple _overPoint;
     Tuple _underPoint;
-public:
 
 private:
     Tuple _reflection;
     bool _inside;
     float _refractiveIndexExit;
     float _refractiveIndexEnter;
+
+    [[nodiscard]] float getShlick(
+            const Tuple &eye, const Tuple &normal,
+            float refractiveIndexExit, float refractiveIndexEnter) const;
 };
 
 #endif //RAYTRACERCHALLENGE_INTERSECTIONCOMPUTATIONS_H

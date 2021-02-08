@@ -356,10 +356,76 @@ TEST_CASE("shade_hit() with a transparent material") {
     ball->setMaterialAmbient(0.5f);
     w.addObject(ball);
     float angle = FMath::sqrt(2.0f) / 2.0f;
-    Ray r(0.0f, 0.0f, -3.0f, 0.0f, -angle, angle);
+    Ray r(0.0f, 0.0f, -3.0f,
+          0.0f, -angle, angle);
     std::vector<Intersection> intersections{{FMath::sqrt(2.0f), floor}};
     auto comps = intersections[0].getComputations(r, intersections);
     auto color = w.getShadeHit(comps, 5);
 
     REQUIRE(color == Color(0.93642f, 0.68642f, 0.68642f));
+};
+
+TEST_CASE("The Schlick approximation under total internal reflection") {
+    auto shape = std::make_shared<Sphere>(Sphere::createGlass());
+    float angle = FMath::sqrt(2.0f) / 2.0f;
+    Ray r(0.0f, 0.0f, angle,
+          0.0f, 1.0f, 0.0f);
+    std::vector<Intersection> intersections{
+            {-angle, shape},
+            {angle,  shape},
+    };
+    auto comps = intersections[1].getComputations(r, intersections);
+    float reflectance = comps.getReflectance();
+
+    REQUIRE(FMath::isOne(reflectance) == true);
+}
+
+TEST_CASE("The Schlick approximation with a perpendicular viewing angle") {
+    auto shape = std::make_shared<Sphere>(Sphere::createGlass());
+    Ray r(0.0f, 0.0f, 0.0f,
+          0.0f, 1.0f, 0.0f);
+    std::vector<Intersection> intersections{
+            {-1, shape},
+            {1,  shape},
+    };
+    auto comps = intersections[1].getComputations(r, intersections);
+    float reflectance = comps.getReflectance();
+
+    REQUIRE(FMath::approximately(reflectance, 0.04f) == true);
+}
+
+TEST_CASE("The Schlick approximation with small angle and n2 > n1") {
+    auto shape = std::make_shared<Sphere>(Sphere::createGlass());
+    Ray r(0.0f, 0.99f, -2.0f,
+          0.0f, 0.0f, 1.0f);
+    std::vector<Intersection> intersections{{1.8589f, shape}};
+    auto comps = intersections[0].getComputations(r, intersections);
+    float reflectance = comps.getReflectance();
+
+    REQUIRE(FMath::approximately(reflectance, 0.48873f) == true);
+}
+
+TEST_CASE("shade_hit() with a reflective, transparent material") {
+    auto w = World::createDefaultWorld();
+    float angle = FMath::sqrt(2.0f) / 2.0f;
+    Ray r(0.0f, 0.0f, -3.0f,
+          0.0f, -angle, angle);
+    auto floor = std::make_shared<Plane>(
+            Mat4::translation(0.0f, -1.0f, 0.0f));
+    floor->setMaterialTransparency(0.5f);
+    floor->setMaterialRefractiveIndex(1.5f);
+    floor->setMaterialReflectivity(0.5f);
+    w.addObject(floor);
+    auto ball = std::make_shared<Sphere>(
+            Mat4::translation(0.0f, -3.5f, -0.5f));
+    ball->setMaterialColor(Color(1.0f, 0.0f, 0.0f));
+    ball->setMaterialAmbient(0.5f);
+    w.addObject(ball);
+    std::vector<Intersection> intersections{
+            {FMath::sqrt(2.0f), floor}
+    };
+    auto comps = intersections[0].getComputations(r, intersections);
+    auto color = w.getShadeHit(comps, 5);
+
+    REQUIRE(color == Color(0.93391f, 0.69643f, 0.69243f));
 };

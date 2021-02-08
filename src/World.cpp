@@ -77,6 +77,13 @@ Color World::getShadeHit(
     const auto reflectedColor = getReflectedColor(comps, remaining);
     const auto refractedColor = getRefractedColor(comps, remaining);
 
+    auto material = comps.getObject()->getMaterial();
+
+    if (material.getReflectivity() > 0.0f && material.getTransparency() > 0.0f) {
+        float reflectance = comps.getReflectance();
+        return color + reflectedColor * reflectance + refractedColor * (1.0f - reflectance);
+    }
+
     return color + reflectedColor + refractedColor;
 }
 

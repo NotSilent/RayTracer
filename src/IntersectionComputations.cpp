@@ -82,3 +82,32 @@ void IntersectionComputations::setRefractiveIndexExit(float value) {
 void IntersectionComputations::setRefractiveIndexEnter(float value) {
     _refractiveIndexEnter = value;
 }
+
+float IntersectionComputations::getReflectance() const {
+    return getShlick(getEye(), getNormal(),
+                     getRefractiveIndexExit(), getRefractiveIndexEnter());
+}
+
+float IntersectionComputations::getShlick(
+        const Tuple &eye, const Tuple &normal,
+        float refractiveIndexExit, float refractiveIndexEnter) const {
+    float cos = Tuple::dot(eye, normal);
+
+    if (refractiveIndexExit > refractiveIndexEnter) {
+        float n = refractiveIndexExit / refractiveIndexEnter;
+        float sin2T = (n * n) * (1.0f - (cos * cos));
+
+        if (sin2T > 1.0f) {
+            return 1.0f;
+        }
+
+        float cosT = FMath::sqrt(1.0f - sin2T);
+        cos = cosT;
+    }
+
+    float argument = (refractiveIndexExit - refractiveIndexEnter) /
+                     (refractiveIndexExit + refractiveIndexEnter);
+    float r0 = argument * argument;
+
+    return r0 + (1.0f - r0) * std::powf(1 - cos, 5);
+}
