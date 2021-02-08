@@ -23,7 +23,7 @@ public:
     [[nodiscard]] virtual Color
     getPoint(const Tuple &point) const = 0;
 
-    [[nodiscard]] Color getColor(const Shape &shape, const Tuple &point) const;
+    [[nodiscard]] Color getColor(std::shared_ptr<Shape> shape, const Tuple &point) const;
 
 private:
     Color _a;

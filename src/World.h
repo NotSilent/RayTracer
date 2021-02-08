@@ -35,13 +35,21 @@ public:
 
     [[nodiscard]] bool containsObject(const Shape &object) const;
 
-    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray);
+    [[nodiscard]] IntersectionResult getIntersectionResult(const Ray &ray) const;
 
-    [[nodiscard]] Color getShadeHit(const IntersectionComputations &comps);
+    [[nodiscard]] Color getShadeHit(
+            const IntersectionComputations &comps, int32_t remaining = 4) const;
 
-    [[nodiscard]] Color getColor(const Ray &ray);
+    [[nodiscard]] Color getColor(const Ray &ray, int32_t remaining = 4) const;
 
-    [[nodiscard]] bool isInShadow(const Tuple &point);
+    [[nodiscard]] bool isInShadow(const Tuple &point) const;
+
+    //TODO: static
+    [[nodiscard]] Color getReflectedColor(
+            const IntersectionComputations &comps, uint32_t remaining = 4) const;
+
+    [[nodiscard]] Color getRefractedColor(
+            const IntersectionComputations &comps, uint32_t remaining = 4) const;
 
     static World createDefaultWorld();
 

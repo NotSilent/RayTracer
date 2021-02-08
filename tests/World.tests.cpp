@@ -21,7 +21,7 @@ TEST_CASE("Creating a world") {
 TEST_CASE("The default world") {
     const Material material(
             Color(0.8f, 1.0f, 0.6f),
-            0.1f, 0.7f, 0.2f, 200.0f);
+            0.1f, 0.7f, 0.2f, 200.0f, 0.0f, 0.0f, 1.0f);
     const PointLight p(
             Tuple::point(-10.0f, 10.0f, -10.0f),
             Color(1.0f, 1.0f, 1.0f));

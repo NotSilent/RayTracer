@@ -55,8 +55,8 @@ TEST_CASE("A stripe pattern alternates in x") {
 }
 
 TEST_CASE("Lighting with a pattern applied") {
-    const Sphere s;
-    Material m(WHITE, 1.0f, 0.0f, 0.0f, 0.0f);
+    auto s = std::make_shared<Sphere>();
+    Material m(WHITE, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
     m.setPattern(sab);
     const auto eye = Tuple::vector(0.0f, 0.0f, -1.0f);
     const auto normal = Tuple::vector(0.0f, 0.0f, -1.0f);
@@ -75,7 +75,7 @@ TEST_CASE("Lighting with a pattern applied") {
 }
 
 TEST_CASE("Stripes with an object transformation") {
-    const Sphere s(Mat4::scaling(2.0f, 2.0f, 2.0f));
+    auto s = std::make_shared<Sphere>(Mat4::scaling(2.0f, 2.0f, 2.0f));
     const StripePattern pattern(WHITE, BLACK);
     const auto c = pattern.getColor(s, Tuple::point(1.5f, 0.0f, 0.0f));
 
@@ -83,7 +83,7 @@ TEST_CASE("Stripes with an object transformation") {
 }
 
 TEST_CASE("Stripes with a pattern transformation") {
-    const Sphere s;
+    auto s = std::make_shared<Sphere>();
     const StripePattern pattern(
             Mat4::scaling(2.0f, 2.0f, 2.0f), WHITE, BLACK);
     const auto c = pattern.getColor(s, Tuple::point(1.5f, 0.0f, 0.0f));
@@ -92,7 +92,7 @@ TEST_CASE("Stripes with a pattern transformation") {
 }
 
 TEST_CASE("Stripes with both an object and a pattern transformation") {
-    const Sphere s(Mat4::scaling(2.0f, 2.0f, 2.0f));
+    auto s = std::make_shared<Sphere>(Mat4::scaling(2.0f, 2.0f, 2.0f));
     const StripePattern pattern(WHITE, BLACK);
     const auto c = pattern.getColor(s, Tuple::point(1.5f, 0.0f, 0.0f));
 
@@ -100,7 +100,7 @@ TEST_CASE("Stripes with both an object and a pattern transformation") {
 }
 
 TEST_CASE("A gradient linearly interpolates between colors") {
-    const Sphere s;
+    auto s = std::make_shared<Sphere>();
     const auto c1 = WHITE;
     const auto c2 = Color(0.75, 0.75, 0.75);
     const auto c3 = Color(0.5, 0.5, 0.5);
@@ -116,7 +116,7 @@ TEST_CASE("A gradient linearly interpolates between colors") {
 }
 
 TEST_CASE("A ring should extend in both x and z") {
-    const Sphere s;
+    auto s = std::make_shared<Sphere>();
 
     REQUIRE(rab->getColor(s, Tuple::point(0.0f, 0.0f, 0.0f)) == WHITE);
     REQUIRE(rab->getColor(s, Tuple::point(1.0f, 0.0f, 0.0f)) == BLACK);
@@ -125,7 +125,7 @@ TEST_CASE("A ring should extend in both x and z") {
 }
 
 TEST_CASE("Checkers should repeat in x") {
-    const Sphere s;
+    auto s = std::make_shared<Sphere>();
 
     REQUIRE(cab->getColor(s, Tuple::point(0.0f, 0.0f, 0.0f)) == WHITE);
     REQUIRE(cab->getColor(s, Tuple::point(0.99f, 0.0f, 0.0f)) == WHITE);
@@ -133,7 +133,7 @@ TEST_CASE("Checkers should repeat in x") {
 }
 
 TEST_CASE("Checkers should repeat in y") {
-    const Sphere s;
+    auto s = std::make_shared<Sphere>();
 
     REQUIRE(cab->getColor(s, Tuple::point(0.0f, 0.0f, 0.0f)) == WHITE);
     REQUIRE(cab->getColor(s, Tuple::point(0.0f, 0.99f, 0.0f)) == WHITE);
@@ -141,7 +141,7 @@ TEST_CASE("Checkers should repeat in y") {
 }
 
 TEST_CASE("Checkers should repeat in z") {
-    const Sphere s;
+    auto s = std::make_shared<Sphere>();
 
     REQUIRE(cab->getColor(s, Tuple::point(0.0f, 0.0f, 0.0f)) == WHITE);
     REQUIRE(cab->getColor(s, Tuple::point(0.0f, 0.0f, 0.99f)) == WHITE);

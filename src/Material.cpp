@@ -10,7 +10,21 @@
 Material::Material() :
         _color(1.0f, 1.0f, 1.0f),
         _ambient(0.1f), _diffuse(0.9f), _specular(0.9f),
-        _shininess(200.0f) {
+        _shininess(200.0f), _reflectivity(0.0f),
+        _transparency(0.0f), _refractiveIndex(1.0f) {
+}
+
+Material::Material(const Color &color, float ambient, float diffuse, float specular,
+                   float shininess, float reflectivity,
+                   float transparency, float refractiveIndex) :
+        _color(color),
+        _ambient(ambient),
+        _diffuse(diffuse),
+        _specular(specular),
+        _shininess(shininess),
+        _reflectivity(reflectivity),
+        _transparency(transparency),
+        _refractiveIndex(refractiveIndex) {
 }
 
 Color Material::getColor() const {
@@ -33,6 +47,10 @@ float Material::getShininess() const {
     return _shininess;
 }
 
+float Material::getReflectivity() const {
+    return _reflectivity;
+}
+
 bool Material::operator!=(const Material &other) const {
     return _color != other._color ||
            _ambient != other._ambient ||
@@ -45,7 +63,7 @@ bool Material::operator==(const Material &other) const {
     return !(*this != other);
 }
 
-Color Material::lightning(const PointLight &light, const Shape &object,
+Color Material::lightning(const PointLight &light, std::shared_ptr<Shape> object,
                           const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector,
                           bool isInShadow) const {
     Color effectiveColor;
@@ -77,16 +95,16 @@ Color Material::lightning(const PointLight &light, const Shape &object,
     }
 }
 
-Material::Material(const Color &color, float ambient, float diffuse, float specular, float shininess) :
-        _color(color),
-        _ambient(ambient),
-        _diffuse(diffuse),
-        _specular(specular),
-        _shininess(shininess) {
+void Material::setColor(const Color &value) {
+    _color = value;
 }
 
 void Material::setAmbient(float value) {
     _ambient = value;
+}
+
+void Material::setReflectivity(float value) {
+    _reflectivity = value;
 }
 
 std::shared_ptr<Pattern> Material::getPattern() const {
@@ -95,4 +113,20 @@ std::shared_ptr<Pattern> Material::getPattern() const {
 
 void Material::setPattern(std::shared_ptr<Pattern> pattern) {
     _pattern = std::move(pattern);
+}
+
+float Material::getTransparency() const {
+    return _transparency;
+}
+
+float Material::getRefractiveIndex() const {
+    return _refractiveIndex;
+}
+
+void Material::setTransparency(float value) {
+    _transparency = value;
+}
+
+void Material::setRefractiveIndex(float value) {
+    _refractiveIndex = value;
 }

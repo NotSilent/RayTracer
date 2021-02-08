@@ -17,7 +17,7 @@ public:
 
     explicit Shape(const Mat4 &transform);
 
-    explicit Shape(const Material &other);
+    explicit Shape(Material other);
 
     Shape(const Mat4 &transform, const Material &material);
 
@@ -37,7 +37,15 @@ public:
 
     void setMaterial(const Material &material);
 
+    void setMaterialColor(const Color &color);
+
     void setMaterialAmbient(float value);
+
+    void setMaterialReflectivity(float value);
+
+    void setMaterialRefractiveIndex(float value);
+
+    void setMaterialTransparency(float value);
 
     [[nodiscard]] Ray getSavedRay() const;
 

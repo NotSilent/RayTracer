@@ -6,7 +6,6 @@
 #include <utility>
 #include "Intersection.h"
 #include "IntersectionComputations.h"
-#include "Ray.h"
 
 float Intersection::getDistance() const {
     return _distance;
@@ -40,13 +39,62 @@ std::ostream &operator<<(std::ostream &os, const Intersection &value) {
     return os;
 }
 
+//TODO: Make this static and take intersection as parameter
 IntersectionComputations Intersection::getComputations(const Ray &ray) const {
     const auto position = ray.getPosition(getDistance());
+    const auto normal = _object->getNormal(position);
 
     return IntersectionComputations(
             getDistance(),
             _object,
             position,
             -ray.getDirection(),
-            _object->getNormal(position));
+            normal,
+            ray.getDirection().getReflected(normal));
+}
+
+IntersectionComputations
+Intersection::getComputations(
+        const Ray &ray, const std::vector<Intersection> &intersections) const {
+    float n1 = 0.0f;
+    float n2 = 0.0f;
+
+    std::vector<std::shared_ptr<Shape>> container;
+
+    for (auto &intersection : intersections) {
+        bool isHit = *this == intersection;
+        if (isHit) {
+            if (container.empty()) {
+                n1 = 1.0f;
+            } else {
+                n1 = (container.end() - 1)->get()->getMaterial().getRefractiveIndex();
+            }
+        }
+
+        auto iter = std::find(container.begin(),
+                              container.end(),
+                              intersection.getObject());
+
+        if (iter != container.end()) {
+            container.erase(iter);
+        } else {
+            container.push_back(intersection.getObject());
+        }
+
+        if (isHit) {
+            if (container.empty()) {
+                n2 = 1.0f;
+            } else {
+                n2 = (container.end() - 1)->get()->getMaterial().getRefractiveIndex();
+            }
+
+            break;
+        }
+    }
+
+    auto comps = getComputations(ray);
+    comps.setRefractiveIndexExit(n1);
+    comps.setRefractiveIndexEnter(n2);
+
+    return comps;
 }

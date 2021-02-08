@@ -26,6 +26,9 @@ public:
 
     [[nodiscard]] IntersectionComputations getComputations(const Ray &ray) const;
 
+    [[nodiscard]] IntersectionComputations getComputations(
+            const Ray &ray, const std::vector<Intersection> &intersections) const;
+
 private:
     float _distance;
     std::shared_ptr<Shape> _object;

@@ -19,6 +19,10 @@ public:
 
     static bool approximately(float lhs, float rhs);
 
+    static bool isZero(float value);
+
+    static bool isOne(float value);
+
     static float sqrt(float value);
 
     static float sin(float value);

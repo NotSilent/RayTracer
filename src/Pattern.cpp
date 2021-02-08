@@ -21,8 +21,8 @@ Color Pattern::getB() const {
     return _b;
 }
 
-Color Pattern::getColor(const Shape &shape, const Tuple &point) const {
-    const auto objectPoint = shape.getTransform().inversed() * point;
+Color Pattern::getColor(std::shared_ptr<Shape> shape, const Tuple &point) const {
+    const auto objectPoint = shape->getTransform().inversed() * point;
     const auto patternPoint = _transform.inversed() * objectPoint;
 
     return getPoint(patternPoint);

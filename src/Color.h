@@ -40,6 +40,9 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, Color const &value);
 
+    static const Color BLACK;
+    static const Color WHITE;
+
 private:
     std::array<float, 3> _buffer;
 

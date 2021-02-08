@@ -13,27 +13,30 @@ int main() {
     auto t1 = std::chrono::high_resolution_clock::now();
 
     Material red(Color(1.0f, 0.0f, 0.0f),
-                 0.1f, 0.9f, 0.0f, 0.0f);
+                 0.1f, 0.9f, 0.0f, 200.0f,
+                 0.0f, 0.0f, 1.0f);
     red.setPattern(std::make_shared<RingPattern>(
             Color(1.0f, 0.0f, 1.0f),
             Color(0.0f, 1.0f, 0.0f)));
     const Material blue(Color(0.0f, 0.0f, 1.0f),
-                        0.1f, 0.9f, 0.0f, 0.0f);
-    Material green(Color(0.0f, 1.0f, 0.0f),
-                   0.1f, 0.5f, 5.0f, 200.0f);
-    green.setPattern(std::make_shared<GradientPattern>(
-            Color(1.0f, 0.0f, 1.0f),
-            Color(0.0f, 1.0f, 0.0f)));
+                        0.1f, 0.9f, 0.0f, 200.0f,
+                        0.0f, 0.0f, 1.0f);
+    Material glass(Color(0.0f, 0.0f, 0.0f),
+                   0.1f, 0.5f, 5.0f, 200.0f,
+                   0.5f, 0.5f, 1.5f);
+//    white.setPattern(std::make_shared<GradientPattern>(
+//            Color(1.0f, 0.0f, 1.0f),
+//            Color(0.0f, 1.0f, 0.0f)));
 
     const auto floor = std::make_shared<Plane>(red);
     const auto middle = std::make_shared<Sphere>(
-            Mat4::translation(-0.5f, 1.0f, 0.5f), green);
+            Mat4::translation(-0.5f, 1.0f, 0.5f), glass);
     const auto right = std::make_shared<Sphere>(
             Mat4::translation(1.5f, 0.5f, -0.5f) *
-            Mat4::scaling(0.5f, 0.5f, 0.5f), green);
+            Mat4::scaling(0.5f, 0.5f, 0.5f), glass);
     const auto left = std::make_shared<Sphere>(
             Mat4::translation(-1.5f, 0.33f, -0.75f) *
-            Mat4::scaling(0.33f, 0.33f, 0.33f), green);
+            Mat4::scaling(0.33f, 0.33f, 0.33f), glass);
     World w;
     w.setLight(PointLight(Tuple::point(-10.0f, 10.0f, -10.0f),
                           Color(1.0f, 1.0f, 1.0f)));

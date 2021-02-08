@@ -15,7 +15,9 @@ class Material {
 public:
     Material();
 
-    Material(const Color &color, float ambient, float diffuse, float specular, float shininess);
+    Material(const Color &color, float ambient, float diffuse, float specular,
+             float shininess, float reflectivity,
+             float transparency, float refractiveIndex);
 
     [[nodiscard]] Color getColor() const;
 
@@ -27,16 +29,30 @@ public:
 
     [[nodiscard]] float getShininess() const;
 
+    [[nodiscard]] float getReflectivity() const;
+
+    [[nodiscard]] float getTransparency() const;
+
+    [[nodiscard]] float getRefractiveIndex() const;
+
     bool operator!=(const Material &other) const;
 
     bool operator==(const Material &other) const;
 
     [[nodiscard]] Color lightning(
-            const PointLight &light, const Shape &object,
+            const PointLight &light, std::shared_ptr<Shape> object,
             const Tuple &point, const Tuple &eyeVector, const Tuple &normalVector,
             bool isInShadow) const;
 
+    void setColor(const Color &color);
+
     void setAmbient(float value);
+
+    void setReflectivity(float value);
+
+    void setTransparency(float value);
+
+    void setRefractiveIndex(float value);
 
     [[nodiscard]] std::shared_ptr<Pattern> getPattern() const;
 
@@ -48,6 +64,9 @@ private:
     float _diffuse;
     float _specular;
     float _shininess;
+    float _reflectivity;
+    float _transparency;
+    float _refractiveIndex;
     std::shared_ptr<Pattern> _pattern;
 };
 

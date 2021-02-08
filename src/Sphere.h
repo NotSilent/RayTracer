@@ -17,6 +17,8 @@ public:
 
     Sphere(const Mat4 &transform, const Material &material);
 
+    [[nodiscard]] static Sphere createGlass();
+
 private:
     [[nodiscard]] Tuple
     getNormalImplementation(const Tuple &localPoint) override;

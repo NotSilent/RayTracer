@@ -24,3 +24,11 @@ float FMath::cos(float value) {
 float FMath::tan(float value) {
     return tanf(value);
 }
+
+bool FMath::isZero(float value) {
+    return approximately(value, 0.0f);
+}
+
+bool FMath::isOne(float value) {
+    return approximately(value, 1.0f);
+}

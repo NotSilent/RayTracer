@@ -4,6 +4,8 @@
 
 #include "Shape.h"
 
+#include <utility>
+
 #include "Ray.h"
 #include "IntersectionResult.h"
 
@@ -15,7 +17,7 @@ Shape::Shape() :
 Shape::Shape(const Mat4 &transform) : _transform(transform), _material() {
 }
 
-Shape::Shape(const Material &material) : _transform(Mat4::identity()), _material(material) {
+Shape::Shape(Material material) : _transform(Mat4::identity()), _material(std::move(material)) {
 }
 
 Shape::Shape(const Mat4 &transform, const Material &material) :
@@ -52,8 +54,24 @@ Material Shape::getMaterial() const {
     return _material;
 }
 
+void Shape::setMaterialColor(const Color &color) {
+    _material.setColor(color);
+}
+
 void Shape::setMaterialAmbient(float value) {
     _material.setAmbient(value);
+}
+
+void Shape::setMaterialReflectivity(float value) {
+    _material.setReflectivity(value);
+}
+
+void Shape::setMaterialRefractiveIndex(float value) {
+    _material.setRefractiveIndex(value);
+}
+
+void Shape::setMaterialTransparency(float value) {
+    _material.setTransparency(value);
 }
 
 Ray Shape::getSavedRay() const {

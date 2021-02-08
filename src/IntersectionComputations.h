@@ -13,11 +13,11 @@ class IntersectionComputations {
 public:
     IntersectionComputations(
             float distance, std::shared_ptr<Shape> object,
-            Tuple point, Tuple eye, Tuple normal);
+            const Tuple &point, const Tuple &eye, const Tuple &normal, const Tuple &reflection);
 
     [[nodiscard]] float getDistance() const;
 
-    [[nodiscard]] const Shape &getObject() const;
+    [[nodiscard]] std::shared_ptr<Shape> getObject() const;
 
     [[nodiscard]] Tuple getPoint() const;
 
@@ -27,7 +27,19 @@ public:
 
     [[nodiscard]] Tuple getOverPoint() const;
 
+    [[nodiscard]] Tuple getUnderPoint() const;
+
+    [[nodiscard]] Tuple getReflection() const;
+
     [[nodiscard]] bool isInside() const;
+
+    [[nodiscard]] float getRefractiveIndexExit() const;
+
+    [[nodiscard]] float getRefractiveIndexEnter() const;
+
+    void setRefractiveIndexExit(float refractiveIndexOne);
+
+    void setRefractiveIndexEnter(float refractiveIndexTwo);
 
 private:
     float _distance;
@@ -36,7 +48,14 @@ private:
     Tuple _eye;
     Tuple _normal;
     Tuple _overPoint;
+    Tuple _underPoint;
+public:
+
+private:
+    Tuple _reflection;
     bool _inside;
+    float _refractiveIndexExit;
+    float _refractiveIndexEnter;
 };
 
 #endif //RAYTRACERCHALLENGE_INTERSECTIONCOMPUTATIONS_H

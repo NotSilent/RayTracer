@@ -13,6 +13,8 @@
 
 class Ray {
 public:
+    Ray(float originX, float originY, float originZ,
+        float directionX, float directionY, float directionZ);
     Ray(const Tuple &origin, const Tuple &direction);
 
     friend Ray operator*(const Mat4 &lhs, const Ray &rhs);

@@ -47,3 +47,11 @@ IntersectionResult Sphere::getIntersectionResultImplementation(const Ray &localR
 
     return {i1, i2};
 }
+
+Sphere Sphere::createGlass() {
+    Material m;
+    m.setTransparency(1.0f);
+    m.setRefractiveIndex(1.5f);
+
+    return Sphere(m);
+}
